@@ -1,0 +1,35 @@
+.tts-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  vertical-align: middle;
+  padding: 0;
+}
+
+.tts-button:hover {
+  background: rgba(45, 90, 90, 0.3);
+  transform: scale(1.1);
+}
+
+.tts-button--speaking {
+  animation: tts-pulse 0.8s ease-in-out infinite;
+  background: rgba(45, 90, 90, 0.35);
+}
+
+.tts-button--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tts-button--speaking {
+    animation: none;
+  }
+}

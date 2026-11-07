@@ -1,0 +1,360 @@
+.provider-detail-page {
+  padding: 24px 16px;
+  min-height: calc(100vh - 60px);
+}
+
+.provider-detail-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.back-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-secondary);
+  cursor: pointer;
+  margin-bottom: 16px;
+  display: inline-block;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: var(--color-secondary-light);
+  text-decoration: underline;
+}
+
+.detail-hero {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .detail-hero {
+    flex-direction: row;
+  }
+}
+
+.detail-hero__media {
+  position: relative;
+  width: 100%;
+  height: 240px;
+}
+
+@media (min-width: 768px) {
+  .detail-hero__media {
+    width: 320px;
+    height: auto;
+    flex-shrink: 0;
+  }
+}
+
+.detail-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.emergency-ribbon {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+  animation: sos-pulse 2s infinite;
+}
+
+.detail-hero__content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+
+.detail-hero__tag-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.category-badge {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--color-accent-emerald);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.experience-badge {
+  background: rgba(232, 184, 109, 0.15);
+  color: var(--color-secondary);
+  border: 1px solid rgba(232, 184, 109, 0.3);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.detail-hero__name {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.detail-hero__clinic {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin-bottom: 12px;
+}
+
+.detail-hero__rating-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rating-pill {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--color-text-primary);
+}
+
+.city-pill-static {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.detail-hero__address {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 18px;
+}
+
+.detail-hero__contact-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.contact-btn, .directions-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.contact-btn {
+  background: var(--color-primary);
+  color: #fff;
+  border: 1px solid var(--color-primary-light);
+}
+
+.directions-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
+  border: 1px solid var(--glass-border);
+}
+
+.contact-btn:hover {
+  background: var(--color-primary-light);
+}
+
+.directions-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.detail-body-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 900px) {
+  .detail-body-grid {
+    grid-template-columns: 1fr 1.2fr;
+  }
+}
+
+.detail-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-card {
+  padding: 20px;
+}
+
+.info-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 8px;
+}
+
+.info-card__section {
+  margin-bottom: 14px;
+}
+
+.info-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.tags-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.spec-tag, .lang-tag {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(45, 90, 90, 0.3);
+  color: var(--color-text-primary);
+  border: 1px solid var(--glass-border);
+}
+
+.pricing-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pricing-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+}
+
+.pricing-service-name {
+  font-size: 13px;
+  color: var(--color-text-primary);
+}
+
+.pricing-service-rate {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.pricing-disclaimer {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 12px;
+  line-height: 1.4;
+}
+
+.booking-card {
+  padding: 24px;
+}
+
+.booking-card__title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.booking-card__subtitle {
+  font-size: 12px;
+  color: var(--color-secondary);
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  margin-bottom: 16px;
+}
+
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.booking-submit-btn {
+  width: 100%;
+  height: 48px;
+  font-size: 15px;
+}
+
+.booking-bridge-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+  margin: 6px 0;
+}
+
+.booking-bridge-divider::before,
+.booking-bridge-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+.booking-bridge-divider span {
+  padding: 0 8px;
+}
+
+.booking-success-box {
+  text-align: center;
+  padding: 36px 16px;
+}
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.booking-success-box h4 {
+  font-size: 18px;
+  color: var(--color-accent-emerald);
+  margin-bottom: 6px;
+}
+
+.booking-success-box p {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  margin-bottom: 12px;
+}
+
+.booking-success-box span {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.provider-detail-loading,
+.provider-detail-error {
+  text-align: center;
+  padding: 60px 20px;
+  max-width: 500px;
+  margin: 40px auto;
+}

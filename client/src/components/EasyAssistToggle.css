@@ -1,0 +1,32 @@
+.easy-assist-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-secondary);
+  background: transparent;
+  color: var(--color-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.easy-assist-toggle:hover {
+  background: rgba(232, 184, 109, 0.15);
+}
+
+.easy-assist-toggle--active {
+  background: var(--color-secondary);
+  color: var(--color-bg-dark);
+}
+
+.easy-assist-toggle--active:hover {
+  background: var(--color-secondary-light);
+}
+
+.easy-assist-toggle__label {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+}

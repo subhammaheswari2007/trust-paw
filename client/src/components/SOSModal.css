@@ -1,0 +1,134 @@
+.sos-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.sos-modal__content {
+  background: var(--color-bg-dark);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+
+.sos-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sos-modal__close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sos-modal__title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: 4px;
+  padding-right: 40px;
+}
+
+.sos-modal__subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+  font-family: 'Noto Sans Devanagari', sans-serif;
+}
+
+.sos-modal__loading {
+  text-align: center;
+  padding: 32px;
+  color: var(--color-text-secondary);
+}
+
+.sos-modal__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sos-modal__card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.sos-modal__hospital-name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.sos-modal__distance {
+  font-size: 14px;
+  color: var(--color-accent-emerald);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.sos-modal__address {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.sos-modal__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.sos-modal__call-btn {
+  flex: 1;
+  padding: 10px 16px;
+  background: var(--color-success);
+  color: #fff;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+
+.sos-modal__call-btn:hover {
+  transform: translateY(-1px);
+}
+
+.sos-modal__directions-btn {
+  flex: 1;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.sos-modal__directions-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}

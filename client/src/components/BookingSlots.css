@@ -1,0 +1,107 @@
+.booking-slots-container {
+  margin: 16px 0;
+}
+
+.booking-slots__section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+}
+
+.booking-slots__date-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+
+.booking-slots__date-pill {
+  flex: 0 0 68px;
+  height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid var(--glass-border);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booking-slots__date-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(232, 184, 109, 0.4);
+}
+
+.booking-slots__date-pill--active {
+  background: var(--color-primary);
+  border-color: var(--color-secondary);
+  box-shadow: 0 4px 14px rgba(232, 184, 109, 0.25);
+}
+
+.booking-slots__date-weekday {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.booking-slots__date-pill--active .booking-slots__date-weekday {
+  color: var(--color-secondary);
+}
+
+.booking-slots__date-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.booking-slots__date-pill--active .booking-slots__date-num {
+  color: #fff;
+}
+
+.booking-slots__date-month {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+.booking-slots__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .booking-slots__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.booking-slots__chip {
+  padding: 10px 8px;
+  text-align: center;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booking-slots__chip:hover {
+  background: rgba(45, 90, 90, 0.35);
+  border-color: var(--color-secondary);
+}
+
+.booking-slots__chip--active {
+  background: var(--color-secondary);
+  color: var(--color-bg-dark);
+  border-color: var(--color-secondary);
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(232, 184, 109, 0.3);
+}

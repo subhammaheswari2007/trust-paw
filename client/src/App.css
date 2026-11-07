@@ -1,0 +1,135 @@
+:root {
+  --color-primary: #2D5A5A;
+  --color-primary-light: #3A7575;
+  --color-primary-dark: #1E3D3D;
+  --color-secondary: #E8B86D;
+  --color-secondary-light: #F0CC8A;
+  --color-accent-emerald: #34D399;
+  --color-bg-dark: #1A2F2F;
+  --color-bg-medium: #243D3D;
+  --color-bg-charcoal: #1E2D2D;
+  --color-text-primary: #F0F4F4;
+  --color-text-secondary: #A0B4B4;
+  --color-text-muted: #708888;
+  --color-danger: #EF4444;
+  --color-danger-glow: rgba(239, 68, 68, 0.4);
+  --color-success: #34D399;
+  --color-warning: #F59E0B;
+  --glass-bg: rgba(45, 90, 90, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(12px);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.2);
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif;
+
+  /* Easy Assist Mode overrides */
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --spacing-base: 16px;
+}
+
+/* Easy Assist Mode - bigger everything */
+body.easy-assist-mode {
+  --font-size-base: 20px;
+  --font-size-lg: 24px;
+  --font-size-xl: 30px;
+  --spacing-base: 24px;
+}
+
+body {
+  background: linear-gradient(135deg, #1A2F2F 0%, #1E2D2D 25%, #243D3D 50%, #1A2F2F 75%, #162828 100%);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  font-size: var(--font-size-base);
+}
+
+/* Global utility classes */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+}
+
+.glass-card--lg {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+/* SOS pulse animation */
+@keyframes sos-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--color-danger-glow);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--color-danger-glow), 0 0 40px var(--color-danger-glow);
+  }
+}
+
+/* TTS pulse animation */
+@keyframes tts-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Verification progress animation */
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Layout helpers */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-layout__main {
+  flex: 1;
+  padding-bottom: 80px;
+}
+
+@media (min-width: 1024px) {
+  .app-layout__main {
+    margin-left: 260px;
+    padding-bottom: 0;
+  }
+}

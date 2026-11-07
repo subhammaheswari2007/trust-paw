@@ -1,0 +1,126 @@
+.pet-scroller-container {
+  margin: 16px 0 24px;
+}
+
+.pet-scroller-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.pet-scroller-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.pet-scroller-subtitle {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-family: 'Noto Sans Devanagari', sans-serif;
+}
+
+.pet-scroller {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 6px 4px 14px;
+  user-select: none;
+  cursor: grab;
+  scrollbar-width: thin;
+}
+
+.pet-scroller--dragging {
+  cursor: grabbing;
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+}
+
+.pet-card {
+  position: relative;
+  flex: 0 0 86px;
+  height: 98px;
+  scroll-snap-align: start;
+  background: rgba(45, 90, 90, 0.16);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  padding: 8px 4px;
+}
+
+.pet-card:hover {
+  transform: translateY(-3px);
+  background: rgba(45, 90, 90, 0.3);
+  border-color: rgba(232, 184, 109, 0.4);
+}
+
+.pet-card--active {
+  background: rgba(45, 90, 90, 0.45);
+  border-color: var(--color-secondary);
+  box-shadow: 0 6px 20px rgba(232, 184, 109, 0.25);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.pet-card__icon {
+  font-size: 32px;
+  margin-bottom: 4px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.pet-card__label {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.pet-card__sublabel {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  line-height: 1;
+}
+
+.pet-card--active .pet-card__label,
+.pet-card--active .pet-card__sublabel {
+  color: var(--color-secondary);
+}
+
+.pet-card__indicator {
+  position: absolute;
+  bottom: -4px;
+  width: 20px;
+  height: 3px;
+  background: var(--color-secondary);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--color-secondary);
+}
+
+@media (min-width: 768px) {
+  .pet-card {
+    flex: 0 0 110px;
+    height: 115px;
+  }
+
+  .pet-card__icon {
+    font-size: 40px;
+  }
+
+  .pet-card__label {
+    font-size: 14px;
+  }
+
+  .pet-card__sublabel {
+    font-size: 11px;
+  }
+}

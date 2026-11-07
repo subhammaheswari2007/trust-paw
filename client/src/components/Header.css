@@ -1,0 +1,107 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header__sos-btn {
+  padding: 6px 12px;
+  background: var(--color-danger);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 13px;
+  animation: sos-pulse 2s ease-in-out infinite;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.header__sos-btn:hover {
+  background: #dc2626;
+}
+
+.header__nearby-btn {
+  padding: 6px 10px;
+  border: 1.5px solid var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.header__nearby-btn:hover {
+  background: rgba(58, 117, 117, 0.2);
+}
+
+.header__logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.header__profile-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.header__profile-btn:hover {
+  background: rgba(45, 90, 90, 0.3);
+}
+
+.header__nearby-panel {
+  border-top: 1px solid var(--glass-border);
+  animation: fadeIn 0.3s ease;
+}
+
+@media (min-width: 1024px) {
+  .header__inner {
+    padding: 12px 24px;
+    gap: 16px;
+  }
+
+  .header__logo {
+    font-size: 22px;
+  }
+
+  .header__sos-btn,
+  .header__nearby-btn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header__sos-btn {
+    animation: none;
+  }
+}
