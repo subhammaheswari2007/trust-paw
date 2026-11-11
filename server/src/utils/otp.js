@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { OTP_LENGTH, BCRYPT_ROUNDS, OTP_EXPIRY_MINUTES } from './constants.js';
 
 /**
