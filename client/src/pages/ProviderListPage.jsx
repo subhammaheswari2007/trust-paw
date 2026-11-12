@@ -12,10 +12,11 @@ export default function ProviderListPage() {
 
   const currentCategory = searchParams.get('category') || '';
   const searchQuery = searchParams.get('q') || '';
-  const [selectedCity, setSelectedCity] = useState('All');
+  const [selectedCity, setSelectedCity] = useState(searchParams.get('city') || 'All');
   const [sortBy, setSortBy] = useState('rating');
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [localSearch, setLocalSearch] = useState(searchQuery);
 
   useEffect(() => {
     async function fetchList() {
@@ -51,10 +52,14 @@ export default function ProviderListPage() {
     setSearchParams(searchParams);
   };
 
-  const getCategoryTitle = () => {
-    if (!currentCategory) return 'All Care Providers / सभी सेवाएं';
-    const found = SERVICE_TYPES.find((s) => s.id === currentCategory);
-    return found ? `${found.emoji} ${found.label} (${found.labelHi})` : 'Services Directory';
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (localSearch.trim()) {
+      searchParams.set('q', localSearch.trim());
+    } else {
+      searchParams.delete('q');
+    }
+    setSearchParams(searchParams);
   };
 
   const displayedProviders = providers.filter((p) => {
@@ -72,95 +77,161 @@ export default function ProviderListPage() {
   return (
     <div className="provider-list-page">
       <div className="provider-list-container">
-        {/* Category Header Bar */}
-        <div className="provider-list-header">
-          <div>
-            <h1 className="provider-list-title">{getCategoryTitle()}</h1>
-            <p className="provider-list-subtitle">
-              {searchQuery ? `Showing matching results for "${searchQuery}"` : 'Verified pet health, grooming, and training specialists across India'}
+        {/* Editorial Directory Header */}
+        <div className="directory-header-card">
+          <div className="directory-header-content">
+            <span className="directory-eyebrow">Directory & Facilities</span>
+            <h1 className="directory-title">
+              {currentCategory
+                ? `${SERVICE_TYPES.find((s) => s.id === currentCategory)?.label || 'Specialists'}`
+                : 'Verified Doctors & Healthcare Clinics'}
+            </h1>
+            <p className="directory-subtitle">
+              प्रमाणित पशु चिकित्सक, सर्जन्स, क्लिनिक एवं ग्रूमिंग विशेषज्ञ
             </p>
           </div>
 
-          <div className="provider-list-sort">
-            <label className="sort-label">Sort by / क्रम:</label>
-            <select
-              className="sort-select"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="rating">⭐ Highest Rated</option>
-              <option value="distance">📍 Nearest to Me</option>
-              <option value="price">🏷️ Lowest Consultation Fee</option>
-            </select>
-          </div>
-        </div>
+          {/* Search, Filter & Sort Controls */}
+          <div className="directory-controls-bar">
+            <form onSubmit={handleSearchSubmit} className="directory-search-form">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="directory-search-icon">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Filter by name, clinic, or specialty..."
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
+                className="directory-search-input"
+              />
+              {localSearch && (
+                <button
+                  type="button"
+                  className="directory-search-clear"
+                  onClick={() => {
+                    setLocalSearch('');
+                    searchParams.delete('q');
+                    setSearchParams(searchParams);
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </form>
 
-        {/* Category Filter Chips */}
-        <div className="category-chips-row">
-          <button
-            className={`filter-pill ${!currentCategory ? 'filter-pill--active' : ''}`}
-            onClick={() => handleCategoryChange('')}
-          >
-            🐾 All Services
-          </button>
-          {SERVICE_TYPES.map((service) => (
+            <div className="directory-dropdown-group">
+              {/* City Filter */}
+              <div className="directory-select-wrapper">
+                <span className="select-label">City:</span>
+                <select
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                  className="directory-select"
+                >
+                  {CITIES.map((c) => (
+                    <option key={c} value={c}>{c === 'All' ? 'All Cities' : c}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sort Filter */}
+              <div className="directory-select-wrapper">
+                <span className="select-label">Sort:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="directory-select"
+                >
+                  <option value="rating">Highest Rated</option>
+                  <option value="distance">Nearest to Me</option>
+                  <option value="price">Lowest Consultation Fee</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Service Category Pills */}
+          <div className="directory-categories-nav">
             <button
-              key={service.id}
-              className={`filter-pill ${currentCategory === service.id ? 'filter-pill--active' : ''}`}
-              onClick={() => handleCategoryChange(service.id)}
+              type="button"
+              className={`category-chip ${!currentCategory ? 'category-chip--active' : ''}`}
+              onClick={() => handleCategoryChange('')}
             >
-              {service.emoji} {service.label}
+              All Services (सभी)
             </button>
-          ))}
-        </div>
-
-        {/* City Filter Pills */}
-        <div className="city-filter-row">
-          <span className="city-filter-label">City / शहर:</span>
-          <div className="city-pills-list">
-            {CITIES.map((city) => (
-              <button
-                key={city}
-                className={`city-pill ${selectedCity === city ? 'city-pill--active' : ''}`}
-                onClick={() => setSelectedCity(city)}
-              >
-                {city}
-              </button>
-            ))}
+            {SERVICE_TYPES.map((service) => {
+              const isActive = currentCategory === service.id;
+              return (
+                <button
+                  key={service.id}
+                  type="button"
+                  className={`category-chip ${isActive ? 'category-chip--active' : ''}`}
+                  onClick={() => handleCategoryChange(service.id)}
+                >
+                  <span>{service.label}</span>
+                  <span className="category-chip__hi">{service.labelHi}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Results Counter */}
-        <div className="results-count">
-          Showing {displayedProviders.length} verified specialists {selectedCity !== 'All' ? `in ${selectedCity}` : ''}
+        {/* Directory Results Header */}
+        <div className="directory-results-meta">
+          <span className="results-count">
+            Showing <strong>{displayedProviders.length}</strong> verified specialists
+            {selectedCity !== 'All' ? ` in ${selectedCity}` : ''}
+          </span>
+          {searchQuery && (
+            <span className="results-filter-tag">
+              Matching "{searchQuery}"
+              <button
+                type="button"
+                onClick={() => {
+                  setLocalSearch('');
+                  searchParams.delete('q');
+                  setSearchParams(searchParams);
+                }}
+              >
+                ✕
+              </button>
+            </span>
+          )}
         </div>
 
-        {/* Directory Grid */}
+        {/* Providers Listing Grid */}
         {loading ? (
-          <div className="list-loading-state">
-            <span className="loading-spinner">🐾</span>
-            <p>Fetching verified specialists...</p>
+          <div className="directory-loading-state">
+            <div className="loading-spinner-circle"></div>
+            <p>Fetching verified specialists across India...</p>
           </div>
         ) : displayedProviders.length === 0 ? (
-          <div className="list-empty-state glass-card">
-            <h3>No providers match your search</h3>
-            <p>Try clearing your search terms or selecting a different city.</p>
+          <div className="directory-empty-card">
+            <div className="empty-icon-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+            <h3>No Specialists Found</h3>
+            <p>We couldn't find any verified practitioners matching your filter criteria.</p>
             <button
-              className="primary-btn"
+              type="button"
+              className="btn-secondary"
               onClick={() => {
+                setLocalSearch('');
                 setSelectedCity('All');
-                handleCategoryChange('');
-                searchParams.delete('q');
-                setSearchParams(searchParams);
+                setSearchParams({});
               }}
             >
-              Reset All Filters / सभी फ़िल्टर रीसेट करें
+              Reset All Filters
             </button>
           </div>
         ) : (
-          <div className="providers-directory-grid">
-            {displayedProviders.map((p) => (
-              <ProviderCard key={p.id || p._id} provider={p} />
+          <div className="directory-grid">
+            {displayedProviders.map((provider) => (
+              <ProviderCard key={provider.id || provider._id} provider={provider} />
             ))}
           </div>
         )}

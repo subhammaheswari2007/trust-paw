@@ -11,6 +11,28 @@ function tryParseJSON(val, fallback) {
   }
 }
 
+export function normalizeImageUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  let clean = url.trim();
+
+  // Convert Google Drive preview/share link to direct image URL
+  const gdriveMatch = clean.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (gdriveMatch) {
+    return `https://drive.google.com/uc?export=view&id=${gdriveMatch[1]}`;
+  }
+
+  // Convert Dropbox share links to raw direct image links
+  if (clean.includes('dropbox.com')) {
+    clean = clean.replace('dl=0', 'raw=1');
+    if (!clean.includes('raw=1')) {
+      clean += (clean.includes('?') ? '&' : '?') + 'raw=1';
+    }
+    return clean;
+  }
+
+  return clean;
+}
+
 export function formatProvider(row) {
   if (!row) return null;
   return {
@@ -118,6 +140,11 @@ export function initTables() {
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS site_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
   `);
 
   // Seed default providers if table is empty
@@ -170,15 +197,15 @@ export function initTables() {
 // ─── User queries ────────────────────────────────────────────────────────────
 
 export function findUserByEmail(email) {
-  return getDB().prepare('SELECT * FROM users WHERE email = ?').get(email);
+  return getDB().prepare('SELECT * FROM users WHERE email = ?').get(email || '');
 }
 
 export function findUserById(id) {
-  return getDB().prepare('SELECT id, email, phone, name, avatar_url, auth_provider, easy_assist_mode, created_at FROM users WHERE id = ?').get(id);
+  return getDB().prepare('SELECT id, email, phone, name, avatar_url, auth_provider, easy_assist_mode, created_at FROM users WHERE id = ?').get(id || '');
 }
 
 export function findUserByGoogleId(googleId) {
-  return getDB().prepare('SELECT * FROM users WHERE google_id = ?').get(googleId);
+  return getDB().prepare('SELECT * FROM users WHERE google_id = ?').get(googleId || '');
 }
 
 export function createUser({ id, email, phone, passwordHash, name, avatarUrl, authProvider, googleId }) {
@@ -186,7 +213,16 @@ export function createUser({ id, email, phone, passwordHash, name, avatarUrl, au
     INSERT INTO users (id, email, phone, password_hash, name, avatar_url, auth_provider, google_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
-  stmt.run(id, email, phone || '', passwordHash || null, name || null, avatarUrl || null, authProvider || 'email', googleId || null);
+  stmt.run(
+    id || '',
+    email || '',
+    phone || '',
+    passwordHash || null,
+    name || 'Pet Parent',
+    avatarUrl || null,
+    authProvider || 'email',
+    googleId || null
+  );
   return findUserById(id);
 }
 
@@ -197,15 +233,15 @@ export function createOTP({ id, email, phone, otpHash, expiresAt }) {
     INSERT INTO otps (id, email, phone, otp_hash, expires_at)
     VALUES (?, ?, ?, ?, ?)
   `);
-  stmt.run(id, email, phone, otpHash, expiresAt);
+  stmt.run(id || '', email || '', phone || '', otpHash || '', expiresAt || '');
 }
 
 export function findOTPById(id) {
-  return getDB().prepare('SELECT * FROM otps WHERE id = ?').get(id);
+  return getDB().prepare('SELECT * FROM otps WHERE id = ?').get(id || '');
 }
 
 export function markOTPVerified(id) {
-  getDB().prepare('UPDATE otps SET verified = 1 WHERE id = ?').run(id);
+  getDB().prepare('UPDATE otps SET verified = 1 WHERE id = ?').run(id || '');
 }
 
 // ─── Pet queries ─────────────────────────────────────────────────────────────
@@ -215,12 +251,12 @@ export function createPet({ id, userId, name, category, breed, age }) {
     INSERT INTO pets (id, user_id, name, category, breed, age)
     VALUES (?, ?, ?, ?, ?, ?)
   `);
-  stmt.run(id, userId, name, category, breed || null, age || null);
+  stmt.run(id || '', userId || '', name || '', category || 'dog', breed || null, age || null);
   return getDB().prepare('SELECT * FROM pets WHERE id = ?').get(id);
 }
 
 export function findPetsByUserId(userId) {
-  return getDB().prepare('SELECT * FROM pets WHERE user_id = ? ORDER BY created_at DESC').all(userId);
+  return getDB().prepare('SELECT * FROM pets WHERE user_id = ? ORDER BY created_at DESC').all(userId || '');
 }
 
 // ─── Booking queries ─────────────────────────────────────────────────────────
@@ -230,12 +266,21 @@ export function createBooking({ id, userId, petId, providerId, serviceType, book
     INSERT INTO bookings (id, user_id, pet_id, provider_id, service_type, booking_date, time_slot, notes)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
-  stmt.run(id, userId, petId || null, providerId, serviceType, bookingDate, timeSlot, notes || null);
+  stmt.run(
+    id || '',
+    userId || '',
+    petId || null,
+    providerId || '',
+    serviceType || 'consultation',
+    bookingDate || '',
+    timeSlot || '',
+    notes || null
+  );
   return getDB().prepare('SELECT * FROM bookings WHERE id = ?').get(id);
 }
 
 export function findBookingsByUserId(userId) {
-  return getDB().prepare('SELECT * FROM bookings WHERE user_id = ? ORDER BY created_at DESC').all(userId);
+  return getDB().prepare('SELECT * FROM bookings WHERE user_id = ? ORDER BY created_at DESC').all(userId || '');
 }
 
 // ─── Provider / Facility queries (Admin & Public) ───────────────────────────
@@ -250,8 +295,33 @@ export function findProviderById(id) {
   return formatProvider(row);
 }
 
-export function upsertProvider(p) {
+export function upsertProvider(p = {}) {
   const db = getDB();
+  const existing = p.id ? findProviderById(p.id) : null;
+
+  const id = p.id || existing?.id || 'prov_' + Date.now();
+  const name = p.name ?? existing?.name ?? 'Dr. Specialist';
+  const clinicName = p.clinicName ?? p.clinic_name ?? existing?.clinicName ?? '';
+  const category = p.category ?? existing?.category ?? 'veterinary';
+  const city = p.city ?? existing?.city ?? 'Mumbai';
+  const area = p.area ?? existing?.area ?? '';
+  const address = p.address ?? existing?.address ?? '';
+  const phone = p.phone ?? existing?.phone ?? '';
+  const email = p.email ?? existing?.email ?? '';
+  const rating = Number(p.rating ?? existing?.rating) || 4.5;
+  const reviewCount = Number(p.reviewCount ?? p.review_count ?? existing?.reviewCount) || 0;
+  const yearsExperience = Number(p.yearsExperience ?? p.years_experience ?? existing?.yearsExperience) || 1;
+  const specializations = p.specializations ?? existing?.specializations ?? [];
+  const isEmergency = (p.isEmergency !== undefined ? p.isEmergency : (p.is_emergency !== undefined ? p.is_emergency : existing?.isEmergency)) ? 1 : 0;
+  const is24x7 = (p.is24x7 !== undefined ? p.is24x7 : (p.is_24x7 !== undefined ? p.is_24x7 : existing?.is24x7)) ? 1 : 0;
+  const lat = Number(p.lat ?? existing?.lat) || 0;
+  const lng = Number(p.lng ?? existing?.lng) || 0;
+  const rawImage = p.imageUrl ?? p.image_url ?? existing?.imageUrl ?? '';
+  const imageUrl = normalizeImageUrl(rawImage);
+  const pricing = p.pricing ?? existing?.pricing ?? {};
+  const availableSlots = p.availableSlots ?? p.available_slots ?? existing?.availableSlots ?? [];
+  const languages = p.languages ?? existing?.languages ?? [];
+
   const stmt = db.prepare(`
     INSERT INTO providers (
       id, name, clinic_name, category, city, area, address, phone, email,
@@ -285,33 +355,61 @@ export function upsertProvider(p) {
   `);
 
   stmt.run(
-    p.id,
-    p.name,
-    p.clinicName || '',
-    p.category || 'veterinary',
-    p.city || 'Mumbai',
-    p.area || '',
-    p.address || '',
-    p.phone || '',
-    p.email || '',
-    Number(p.rating) || 4.5,
-    Number(p.reviewCount) || 0,
-    Number(p.yearsExperience) || 1,
-    typeof p.specializations === 'string' ? p.specializations : JSON.stringify(p.specializations || []),
-    p.isEmergency ? 1 : 0,
-    p.is24x7 ? 1 : 0,
-    Number(p.lat) || 0,
-    Number(p.lng) || 0,
-    p.imageUrl || '',
-    typeof p.pricing === 'string' ? p.pricing : JSON.stringify(p.pricing || {}),
-    typeof p.availableSlots === 'string' ? p.availableSlots : JSON.stringify(p.availableSlots || []),
-    typeof p.languages === 'string' ? p.languages : JSON.stringify(p.languages || [])
+    id,
+    name,
+    clinicName,
+    category,
+    city,
+    area,
+    address,
+    phone,
+    email,
+    rating,
+    reviewCount,
+    yearsExperience,
+    typeof specializations === 'string' ? specializations : JSON.stringify(specializations || []),
+    isEmergency,
+    is24x7,
+    lat,
+    lng,
+    imageUrl,
+    typeof pricing === 'string' ? pricing : JSON.stringify(pricing || {}),
+    typeof availableSlots === 'string' ? availableSlots : JSON.stringify(availableSlots || []),
+    typeof languages === 'string' ? languages : JSON.stringify(languages || [])
   );
 
-  return findProviderById(p.id);
+  return findProviderById(id);
 }
 
 export function deleteProviderById(id) {
-  return getDB().prepare('DELETE FROM providers WHERE id = ?').run(id);
+  return getDB().prepare('DELETE FROM providers WHERE id = ?').run(id || '');
 }
+
+export function getAllSiteSettings() {
+  try {
+    const rows = getDB().prepare('SELECT key, value FROM site_settings').all();
+    const settings = {};
+    for (const r of rows) {
+      settings[r.key] = r.value;
+    }
+    return settings;
+  } catch {
+    return {};
+  }
+}
+
+export function setSiteSetting(key, value) {
+  try {
+    if (!key) return;
+    const safeKey = String(key).trim();
+    const safeVal = normalizeImageUrl(String(value ?? '')).trim();
+    getDB().prepare(`
+      INSERT INTO site_settings (key, value) VALUES (?, ?)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value
+    `).run(safeKey, safeVal);
+  } catch (err) {
+    console.error('Failed to set site setting:', err);
+  }
+}
+
 

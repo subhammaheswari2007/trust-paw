@@ -1,153 +1,383 @@
-.sos-modal {
+.sos-modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 1000;
-  background: rgba(0, 0, 0, 0.7);
+  z-index: 150;
+  background-color: rgba(26, 40, 55, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  animation: fadeIn 0.2s ease;
+  padding: 10px;
+  box-sizing: border-box;
+  animation: modalFadeIn 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.sos-modal__content {
-  background: var(--color-bg-dark);
-  border: 1px solid var(--glass-border);
+@media (min-width: 480px) {
+  .sos-modal-backdrop {
+    padding: 20px;
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.sos-modal-card {
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: 24px;
-  max-width: 520px;
+  max-width: 680px;
   width: 100%;
-  max-height: 85vh;
+  max-height: 92vh;
   overflow-y: auto;
-  position: relative;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-modal);
+  padding: 18px 14px;
+  box-sizing: border-box;
 }
 
-.sos-modal__close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-text-primary);
-  font-size: 16px;
+@media (min-width: 480px) {
+  .sos-modal-card {
+    padding: 28px;
+    border-radius: var(--radius-xl);
+    max-height: 88vh;
+  }
+}
+
+@media (min-width: 640px) {
+  .sos-modal-card {
+    padding: 36px;
+  }
+}
+
+.sos-modal-header {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.sos-modal__close:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.sos-modal__title {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  margin-bottom: 4px;
-  padding-right: 40px;
-}
-
-.sos-modal__subtitle {
-  font-size: var(--font-size-base);
-  color: var(--color-text-secondary);
-  margin-bottom: 20px;
-  font-family: 'Noto Sans Devanagari', sans-serif;
-}
-
-.sos-modal__loading {
-  text-align: center;
-  padding: 32px;
-  color: var(--color-text-secondary);
-}
-
-.sos-modal__list {
+.sos-title-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-.sos-modal__card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  padding: 16px;
+.sos-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-emergency-light);
+  color: var(--color-emergency);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  align-self: flex-start;
 }
 
-.sos-modal__hospital-name {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  margin-bottom: 4px;
+.sos-main-title {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 0 0 4px 0;
+  line-height: 1.2;
 }
 
-.sos-modal__distance {
-  font-size: 14px;
-  color: var(--color-accent-emerald);
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.sos-modal__address {
-  font-size: 14px;
+.sos-subtitle {
+  font-family: var(--font-hindi);
+  font-size: 13.5px;
   color: var(--color-text-secondary);
-  margin-bottom: 12px;
+  margin: 0;
 }
 
-.sos-modal__actions {
+.sos-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
   display: flex;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
-.sos-modal__call-btn {
-  flex: 1;
+.sos-close-btn:hover {
+  color: var(--color-navy);
+  border-color: var(--color-navy);
+}
+
+/* Master Configured Emergency Hotline Banner */
+.sos-hotline-banner {
+  background: linear-gradient(135deg, #FFF5F5 0%, #FFFFFF 100%);
+  border: 1.5px solid rgba(201, 75, 69, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 14px rgba(201, 75, 69, 0.08);
+}
+
+.hotline-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hotline-pulse-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--color-emergency);
+  display: inline-block;
+  animation: hotlinePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes hotlinePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(201, 75, 69, 0.7);
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.85;
+    box-shadow: 0 0 0 6px rgba(201, 75, 69, 0);
+  }
+}
+
+.hotline-tag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+  color: var(--color-emergency);
+}
+
+.hotline-title {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 0 0 4px 0;
+}
+
+.hotline-sub {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+  margin: 0 0 14px 0;
+}
+
+.hotline-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.hotline-call-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
   padding: 10px 16px;
-  background: var(--color-success);
-  color: #fff;
-  font-weight: 600;
+  background-color: var(--color-emergency);
+  color: #FFFFFF;
   border-radius: var(--radius-sm);
-  text-align: center;
-  font-size: 14px;
-  transition: transform 0.2s;
-}
-
-.sos-modal__call-btn:hover {
-  transform: translateY(-1px);
-}
-
-.sos-modal__wa-btn {
-  flex: 1;
-  padding: 10px 16px;
-  background: #25D366;
-  color: #fff;
+  font-size: 13.5px;
   font-weight: 600;
-  border-radius: var(--radius-sm);
-  text-align: center;
-  font-size: 14px;
-  transition: transform 0.2s, background 0.2s;
   text-decoration: none;
-  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(201, 75, 69, 0.25);
+  flex: 1;
+  text-align: center;
+  touch-action: manipulation;
+  transition: all var(--transition-fast);
 }
 
-.sos-modal__wa-btn:hover {
-  background: #20ba5a;
+.hotline-call-btn:hover {
+  background-color: #B53E38;
   transform: translateY(-1px);
 }
 
-.sos-modal__directions-btn {
-  flex: 1;
+.hotline-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
   padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-text-primary);
-  font-weight: 500;
+  background-color: #25D366;
+  color: #FFFFFF;
   border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.2);
+  flex: 1;
   text-align: center;
-  font-size: 14px;
-  transition: background 0.2s;
+  touch-action: manipulation;
+  transition: all var(--transition-fast);
 }
 
-.sos-modal__directions-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+.hotline-wa-btn:hover {
+  background-color: #20BA5A;
+  transform: translateY(-1px);
+}
+
+.sos-loading {
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.sos-hospital-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sos-hospital-card {
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color var(--transition-fast);
+}
+
+.sos-hospital-card:hover {
+  border-color: var(--color-border-strong);
+}
+
+.sos-hospital-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.sos-hospital-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-navy);
+  margin: 0;
+}
+
+.sos-distance-tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-emergency);
+  background-color: var(--color-emergency-light);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.sos-hospital-address {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.sos-action-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+  width: 100%;
+}
+
+.sos-call-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 9px 14px;
+  background-color: var(--color-emergency);
+  color: #FFFFFF;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+  touch-action: manipulation;
+  transition: background-color var(--transition-fast);
+}
+
+.sos-call-action:hover {
+  background-color: #B53E38;
+}
+
+.sos-whatsapp-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 9px 14px;
+  background-color: #25D366;
+  color: #FFFFFF;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+  touch-action: manipulation;
+  transition: background-color var(--transition-fast);
+}
+
+.sos-whatsapp-action:hover {
+  background-color: #20BA5A;
+}
+
+.sos-directions-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 9px 14px;
+  background-color: #FFFFFF;
+  border: 1px solid var(--color-border);
+  color: var(--color-navy);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  flex: 1;
+  text-align: center;
+  touch-action: manipulation;
+  transition: all var(--transition-fast);
+}
+
+.sos-directions-action:hover {
+  border-color: var(--color-navy);
+  background-color: var(--color-surface);
 }

@@ -3,138 +3,118 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
-  background: radial-gradient(circle at 50% 30%, rgba(45, 90, 90, 0.45) 0%, rgba(26, 47, 47, 0.98) 75%);
+  padding: 20px 12px;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
+}
+
+@media (min-width: 480px) {
+  .verification-page {
+    padding: 32px 20px;
+  }
 }
 
 .verification-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  max-width: 440px;
   width: 100%;
-  max-width: 520px;
-  padding: 40px 32px;
-  background: rgba(30, 45, 45, 0.75);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+  padding: 28px 16px;
+  box-shadow: var(--shadow-card);
   text-align: center;
+  box-sizing: border-box;
+}
+
+@media (min-width: 480px) {
+  .verification-card {
+    padding: 40px 32px;
+    border-radius: var(--radius-xl);
+  }
 }
 
 .verification-brand {
-  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
-.verification-brand__logo {
-  font-size: 42px;
-  display: inline-block;
-  margin-bottom: 8px;
-  filter: drop-shadow(0 4px 12px rgba(232, 184, 109, 0.4));
+.verification-logo-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-navy);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
 }
 
-.verification-brand__name {
+.verification-brand-name {
+  font-family: var(--font-serif);
   font-size: 26px;
-  font-weight: 800;
-  color: var(--color-text-primary);
-  letter-spacing: -0.5px;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 0 0 4px 0;
 }
 
-.verification-brand__badge {
-  display: inline-block;
-  margin-top: 6px;
+.verification-badge {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--color-secondary);
-  background: rgba(232, 184, 109, 0.12);
-  padding: 4px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(232, 184, 109, 0.25);
+  color: var(--color-terracotta-dark);
 }
 
 .verification-status-box {
   min-height: 54px;
-  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 24px;
 }
 
 .verification-status-text {
   font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: 4px;
+  font-weight: 500;
+  color: var(--color-navy);
+  margin: 0 0 2px 0;
 }
 
 .verification-status-text-hi {
-  font-size: 12px;
+  font-family: var(--font-hindi);
+  font-size: 12.5px;
   color: var(--color-text-secondary);
-  font-family: 'Noto Sans Devanagari', sans-serif;
+  margin: 0;
 }
 
-/* Horizontal Progress Bar Container */
-.verification-track {
-  position: relative;
+.verification-progress-track {
   width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  overflow: visible;
-  margin-bottom: 18px;
+  height: 6px;
+  background-color: var(--color-surface-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 12px;
 }
 
-/* Gradient fill from Deep Teal to Polished Emerald */
-.verification-bar {
-  position: relative;
+.verification-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #2D5A5A 0%, #3A7575 50%, #34D399 100%);
-  border-radius: 6px;
-  box-shadow: 0 0 14px rgba(52, 211, 153, 0.4);
-  transition: width 0.05s linear;
+  background-color: var(--color-navy);
+  border-radius: var(--radius-full);
+  transition: width 100ms linear;
 }
 
-/* Gliding TrustPaw logo at leading edge */
-.verification-sliding-logo {
-  position: absolute;
-  top: -14px;
-  right: -16px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #1A2F2F;
-  border: 2px solid var(--color-secondary);
-  box-shadow: 0 0 12px rgba(232, 184, 109, 0.6);
+.verification-progress-meta {
   display: flex;
   align-items: center;
-  justify-content: center;
-  transform: rotate(15deg);
-  animation: logoGlidePulse 1.2s infinite alternate ease-in-out;
-}
-
-.sliding-paw {
-  font-size: 16px;
-}
-
-@keyframes logoGlidePulse {
-  0% {
-    transform: rotate(10deg) scale(0.95);
-  }
-  100% {
-    transform: rotate(20deg) scale(1.1);
-  }
-}
-
-.verification-footer {
-  display: flex;
   justify-content: space-between;
-  align-items: center;
   font-size: 12px;
   color: var(--color-text-muted);
 }
 
-.verification-percent {
+.verification-pct {
   font-weight: 700;
-  color: var(--color-accent-emerald);
-  font-size: 14px;
-}
-
-.verification-lock {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  color: var(--color-navy);
 }

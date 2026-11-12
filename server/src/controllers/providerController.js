@@ -3,6 +3,8 @@ import {
   findProviderById,
   upsertProvider,
   deleteProviderById,
+  getAllSiteSettings,
+  setSiteSetting,
 } from '../models/schema.js';
 import { haversineDistance } from '../utils/haversine.js';
 
@@ -145,4 +147,54 @@ export async function adminDeleteProvider(req, res, next) {
     next(err);
   }
 }
+
+// ─── SETTINGS: GET /api/v1/providers/settings ────────────────────────────────
+
+export async function getSettings(req, res, next) {
+  try {
+    const current = getAllSiteSettings();
+    res.json({
+      success: true,
+      settings: {
+        heroImageUrl: current.heroImageUrl || 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=900&h=700&fit=crop',
+        sosPhone: current.sosPhone || '+919725671201',
+        sosHospitalName: current.sosHospitalName || 'TrustPaw 24/7 National Emergency Trauma Hotline',
+        ...current,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ─── ADMIN: POST /api/v1/providers/admin/settings ────────────────────────────
+
+export async function adminSaveSettings(req, res, next) {
+  try {
+    const passcode = req.headers['x-admin-passcode'] || req.body?.adminPasscode;
+    if (passcode !== ADMIN_PASSCODE) {
+      return res.status(403).json({ success: false, message: 'Unauthorized admin request' });
+    }
+
+    const { heroImageUrl, sosPhone, sosHospitalName } = req.body || {};
+    if (heroImageUrl !== undefined) setSiteSetting('heroImageUrl', heroImageUrl);
+    if (sosPhone !== undefined) setSiteSetting('sosPhone', sosPhone);
+    if (sosHospitalName !== undefined) setSiteSetting('sosHospitalName', sosHospitalName);
+
+    const updated = getAllSiteSettings();
+    res.json({
+      success: true,
+      message: 'Site settings updated successfully',
+      settings: {
+        heroImageUrl: updated.heroImageUrl || heroImageUrl,
+        sosPhone: updated.sosPhone || sosPhone,
+        sosHospitalName: updated.sosHospitalName || sosHospitalName,
+        ...updated,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 

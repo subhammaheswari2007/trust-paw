@@ -15,6 +15,7 @@ out/
 .env.test.local
 .env.production.local
 server/.env
+client/.env
 
 # Local SQLite databases & logs
 *.db
@@ -31,6 +32,7 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 # Editor & OS files
+.vercel/
 .vscode/
 .idea/
 *.suo

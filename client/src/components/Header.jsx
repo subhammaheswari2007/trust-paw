@@ -10,13 +10,12 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSecretModal, setShowSecretModal] = useState(false);
 
-  // 5-Click secret trigger state
+  // 5-Click secret trigger state for admin
   const [clickCount, setClickCount] = useState(0);
   const lastClickRef = useRef(0);
 
   const handleLogoClick = () => {
     const now = Date.now();
-    // If more than 3 seconds elapsed since last click, reset counter
     if (now - lastClickRef.current > 3000) {
       setClickCount(1);
     } else {
@@ -39,101 +38,111 @@ export default function Header() {
     <>
       <header className="header">
         <div className="header__inner">
-          {/* Brand Logo (Secret 5-Click Trigger) */}
+          {/* Brand Logo with Editorial Serif & Medical Paw Icon */}
           <div
-            className="header__brand-btn"
+            className="header__brand"
             onClick={handleLogoClick}
-            title="TrustPaw - Premium Pet Care & Store"
+            title="TrustPaw — Premier Pet Healthcare & Wellness"
           >
-            <span className="header__logo-icon">🐾</span>
-            <div className="header__brand-text-col">
-              <span className="header__brand-title">TrustPaw</span>
-              <span className="header__brand-subtag">Pet Care & Store</span>
+            <div className="header__logo-mark">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 2.5 3 4 2-1.5 3-2.5 3-4a3 3 0 0 0-3-3z"/>
+                <path d="M19 8a2.5 2.5 0 0 0-2.5 2.5c0 1.2.8 2 2.5 3.5 1.7-1.5 2.5-2.3 2.5-3.5A2.5 2.5 0 0 0 19 8z"/>
+                <path d="M5 8a2.5 2.5 0 0 1 2.5 2.5c0 1.2-.8 2-2.5 3.5C3.3 12.5 2.5 11.7 2.5 10.5A2.5 2.5 0 0 1 5 8z"/>
+                <path d="M12 11c-3.3 0-6 2.7-6 6a5 5 0 0 0 10 0c0-3.3-2.7-6-4-6z"/>
+              </svg>
+            </div>
+            <div className="header__brand-text">
+              <span className="header__brand-name">TrustPaw</span>
+              <span className="header__brand-tag">Pet Healthcare & Wellness</span>
             </div>
           </div>
 
-          {/* Desktop & Laptop Navigation Menu */}
-          <nav className="header__nav-links">
+          {/* Desktop Navigation Menu */}
+          <nav className="header__nav">
             <NavLink
               to="/"
               end
               className={({ isActive }) =>
-                `header__nav-item ${isActive ? 'header__nav-item--active' : ''}`
+                `header__nav-link ${isActive ? 'header__nav-link--active' : ''}`
               }
             >
-              Home
+              Overview
             </NavLink>
             <NavLink
               to="/providers"
               className={({ isActive }) =>
-                `header__nav-item ${isActive ? 'header__nav-item--active' : ''}`
+                `header__nav-link ${isActive ? 'header__nav-link--active' : ''}`
               }
             >
-              Doctors & Clinics
+              Doctors & Hospitals
             </NavLink>
             <NavLink
               to="/providers?category=grooming"
-              className="header__nav-item"
+              className="header__nav-link"
             >
-              Spa & Grooming
+              Grooming & Spa
             </NavLink>
             <NavLink
               to="/providers?category=training"
-              className="header__nav-item"
+              className="header__nav-link"
             >
               Training
             </NavLink>
             <NavLink
               to="/bookings"
               className={({ isActive }) =>
-                `header__nav-item ${isActive ? 'header__nav-item--active' : ''}`
+                `header__nav-link ${isActive ? 'header__nav-link--active' : ''}`
               }
             >
-              My Appointments
+              Appointments
             </NavLink>
           </nav>
 
-          {/* Right Actions */}
-          <div className="header__right-actions">
+          {/* Right Action Tray */}
+          <div className="header__actions">
             <button
               type="button"
-              className="header__city-pill"
+              className="header__location-btn"
               onClick={() => navigate('/providers')}
-              title="Filter by City / शहर चुनें"
+              title="Locate Clinics by City"
             >
-              <span>📍</span>
-              <span>Find Clinics</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Clinics</span>
             </button>
 
             <button
               type="button"
-              className="header__book-btn"
+              className="header__book-cta"
               onClick={() => navigate('/providers')}
             >
-              + Book Specialist
+              Book Specialist
             </button>
 
             {user ? (
               <div
                 className="header__user-pill"
                 onClick={() => navigate('/profile')}
-                title="View Profile / मेरी प्रोफाइल"
+                title="View Account & Pets"
               >
                 <div className="header__user-avatar">
-                  {user.avatar_url ? (
-                    <img src={user.avatar_url} alt={user.name || 'User'} />
+                  {user.avatar_url || user.avatar ? (
+                    <img src={user.avatar_url || user.avatar} alt={user.name || 'User'} />
                   ) : (
                     <span>{(user.name || user.email || 'U')[0].toUpperCase()}</span>
                   )}
                 </div>
                 <span className="header__user-name">
-                  {user.name ? user.name.split(' ')[0] : 'Parent'}
+                  {user.name ? user.name.split(' ')[0] : 'Account'}
                 </span>
               </div>
             ) : (
               <button
                 type="button"
-                className="header__city-pill"
+                className="header__signin-btn"
                 onClick={() => navigate('/login')}
               >
                 Sign In
@@ -147,93 +156,69 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? '✕' : '☰'}
+              {mobileMenuOpen ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="12" x2="21" y2="12"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+              )}
             </button>
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu for Phones */}
+        {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
           <div className="header__mobile-drawer">
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) =>
-                `header__mobile-link ${isActive ? 'header__mobile-link--active' : ''}`
-              }
-              onClick={closeMobile}
-            >
-              <span>🏠</span> Home Dashboard
+            <NavLink to="/" end className="header__mobile-item" onClick={closeMobile}>
+              Overview
             </NavLink>
-            <NavLink
-              to="/providers"
-              className={({ isActive }) =>
-                `header__mobile-link ${isActive ? 'header__mobile-link--active' : ''}`
-              }
-              onClick={closeMobile}
-            >
-              <span>🩺</span> Doctors & Clinics
+            <NavLink to="/providers" className="header__mobile-item" onClick={closeMobile}>
+              Doctors & Hospitals
             </NavLink>
-            <NavLink
-              to="/providers?category=grooming"
-              className="header__mobile-link"
-              onClick={closeMobile}
-            >
-              <span>🛁</span> Spa & Grooming
+            <NavLink to="/providers?category=grooming" className="header__mobile-item" onClick={closeMobile}>
+              Grooming & Spa
             </NavLink>
-            <NavLink
-              to="/providers?category=training"
-              className="header__mobile-link"
-              onClick={closeMobile}
-            >
-              <span>🎓</span> Pet Training
+            <NavLink to="/providers?category=training" className="header__mobile-item" onClick={closeMobile}>
+              Behavior & Training
             </NavLink>
-            <NavLink
-              to="/bookings"
-              className={({ isActive }) =>
-                `header__mobile-link ${isActive ? 'header__mobile-link--active' : ''}`
-              }
-              onClick={closeMobile}
-            >
-              <span>📅</span> My Appointments
+            <NavLink to="/bookings" className="header__mobile-item" onClick={closeMobile}>
+              My Appointments
             </NavLink>
-            <NavLink
-              to="/easy-assist"
-              className="header__mobile-link"
-              onClick={closeMobile}
-            >
-              <span>👵</span> Easy Assist Mode
+            <NavLink to="/easy-assist" className="header__mobile-item header__mobile-item--highlight" onClick={closeMobile}>
+              सुगम सेवा | Easy Assist
             </NavLink>
-            <NavLink
-              to="/profile"
-              className="header__mobile-link"
-              onClick={closeMobile}
-            >
-              <span>👤</span> My Profile & Pets
+            <NavLink to="/profile" className="header__mobile-item" onClick={closeMobile}>
+              My Pets & Profile
             </NavLink>
 
-            <div className="header__mobile-footer-actions">
+            <div className="header__mobile-footer">
               <button
                 type="button"
-                className="header__book-btn"
-                style={{ display: 'inline-flex', flex: 1, justifyContent: 'center' }}
+                className="btn-primary"
+                style={{ width: '100%' }}
                 onClick={() => {
                   closeMobile();
                   navigate('/providers');
                 }}
               >
-                + Book an Appointment
+                Book a Specialist
               </button>
               {user && (
                 <button
                   type="button"
-                  className="header__city-pill"
+                  className="header__mobile-logout"
                   onClick={() => {
                     closeMobile();
                     logout();
                   }}
                 >
-                  Logout
+                  Sign Out
                 </button>
               )}
             </div>

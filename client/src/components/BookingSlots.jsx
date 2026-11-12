@@ -8,7 +8,7 @@ export default function BookingSlots({
   selectedDate,
   selectedSlot,
 }) {
-  // Generate next 7 days
+  // Generate next 7 days starting from today
   const nextDays = useMemo(() => {
     const days = [];
     const today = new Date();
@@ -39,8 +39,14 @@ export default function BookingSlots({
 
   return (
     <div className="booking-slots-container">
-      <div className="booking-slots__date-section">
-        <h4 className="booking-slots__section-title">Select Appointment Date / दिनांक चुनें</h4>
+      {/* Date Picker Row */}
+      <div className="booking-slots__section">
+        <div className="booking-slots__header">
+          <span className="slots-eyebrow">Step 1</span>
+          <h4 className="slots-title">Select Consultation Date</h4>
+          <span className="slots-subtitle">दिनांक चुनें</span>
+        </div>
+
         <div className="booking-slots__date-row">
           {nextDays.map((d) => {
             const isSelected = activeDate === d.iso;
@@ -48,22 +54,26 @@ export default function BookingSlots({
               <button
                 key={d.iso}
                 type="button"
-                className={`booking-slots__date-pill ${
-                  isSelected ? 'booking-slots__date-pill--active' : ''
-                }`}
+                className={`date-pill ${isSelected ? 'date-pill--active' : ''}`}
                 onClick={() => handleDatePick(d.iso)}
               >
-                <span className="booking-slots__date-weekday">{d.dayName}</span>
-                <span className="booking-slots__date-num">{d.dayNum}</span>
-                <span className="booking-slots__date-month">{d.month}</span>
+                <span className="date-pill__weekday">{d.dayName}</span>
+                <span className="date-pill__num">{d.dayNum}</span>
+                <span className="date-pill__month">{d.month}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="booking-slots__time-section">
-        <h4 className="booking-slots__section-title">Available Time Slots / समय स्लॉट चुनें</h4>
+      {/* Time Slot Picker Grid */}
+      <div className="booking-slots__section">
+        <div className="booking-slots__header">
+          <span className="slots-eyebrow">Step 2</span>
+          <h4 className="slots-title">Select Time Slot</h4>
+          <span className="slots-subtitle">उपलब्ध समय स्लॉट</span>
+        </div>
+
         <div className="booking-slots__grid">
           {availableSlots.map((slot) => {
             const isSelected = activeSlot === slot;
@@ -71,12 +81,14 @@ export default function BookingSlots({
               <button
                 key={slot}
                 type="button"
-                className={`booking-slots__chip ${
-                  isSelected ? 'booking-slots__chip--active' : ''
-                }`}
+                className={`time-chip ${isSelected ? 'time-chip--active' : ''}`}
                 onClick={() => handleSlotPick(slot)}
               >
-                {formatTime(slot)}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="time-chip__icon">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span>{formatTime(slot)}</span>
               </button>
             );
           })}

@@ -3,21 +3,28 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 90;
-  background: rgba(26, 47, 47, 0.88);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-top: 1px solid var(--glass-border);
+  height: calc(60px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background-color: #FFFFFF;
+  border-top: 1px solid var(--color-border);
+  z-index: 95;
+  box-shadow: 0 -4px 16px rgba(38, 59, 80, 0.05);
+}
+
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none;
+  }
 }
 
 .bottom-nav__inner {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: 64px;
+  height: 60px;
   max-width: 600px;
   margin: 0 auto;
-  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 4px;
 }
 
 .bottom-nav__item {
@@ -25,42 +32,50 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   flex: 1;
+  min-height: 48px;
+  height: 100%;
   color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: all 0.2s;
-  padding: 4px 0;
+  font-size: 11px;
+  font-weight: 500;
+  position: relative;
+  transition: color var(--transition-fast);
+  padding: 4px 2px;
+  touch-action: manipulation;
 }
 
 .bottom-nav__icon {
-  font-size: 20px;
-  margin-bottom: 2px;
-}
-
-.bottom-nav__label {
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.1;
+  stroke: var(--color-text-secondary);
+  transition: stroke var(--transition-fast), transform var(--transition-fast);
 }
 
 .bottom-nav__sublabel {
+  font-family: var(--font-hindi);
   font-size: 9px;
-  font-family: 'Noto Sans Devanagari', sans-serif;
-  opacity: 0.8;
+  color: var(--color-text-muted);
   line-height: 1;
 }
 
 .bottom-nav__item--active {
-  color: var(--color-secondary);
-  transform: translateY(-2px);
+  color: var(--color-navy);
+  font-weight: 600;
 }
 
 .bottom-nav__item--active .bottom-nav__icon {
-  filter: drop-shadow(0 2px 6px rgba(232, 184, 109, 0.4));
+  stroke: var(--color-navy);
 }
 
-@media (min-width: 1024px) {
-  .bottom-nav {
-    display: none;
-  }
+.bottom-nav__item--active .bottom-nav__sublabel {
+  color: var(--color-terracotta-dark);
+}
+
+.bottom-nav__item--active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 24px;
+  height: 2px;
+  background-color: var(--color-terracotta);
+  border-radius: 0 0 2px 2px;
 }

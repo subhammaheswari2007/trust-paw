@@ -1,6 +1,38 @@
 import { useRef, useState } from 'react';
-import { PET_CATEGORIES } from '../utils/constants';
 import './PetCategoryScroller.css';
+
+const PET_TYPES = [
+  {
+    id: null,
+    label: 'All Companions',
+    labelHi: 'सभी साथी',
+    img: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=160&h=160&fit=crop&crop=faces',
+  },
+  {
+    id: 'dog',
+    label: 'Dogs',
+    labelHi: 'कुत्ता',
+    img: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=160&h=160&fit=crop&crop=faces',
+  },
+  {
+    id: 'cat',
+    label: 'Cats',
+    labelHi: 'बिल्ली',
+    img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=160&h=160&fit=crop&crop=faces',
+  },
+  {
+    id: 'rabbit',
+    label: 'Rabbits',
+    labelHi: 'खरगोश',
+    img: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=160&h=160&fit=crop&crop=faces',
+  },
+  {
+    id: 'bird',
+    label: 'Avian & Birds',
+    labelHi: 'पक्षी',
+    img: 'https://images.unsplash.com/photo-1522926193341-e9ffd686c60f?w=160&h=160&fit=crop&crop=faces',
+  },
+];
 
 export default function PetCategoryScroller({ selectedCategory, onSelectCategory }) {
   const scrollerRef = useRef(null);
@@ -27,10 +59,13 @@ export default function PetCategoryScroller({ selectedCategory, onSelectCategory
   };
 
   return (
-    <div className="pet-scroller-container">
+    <section className="pet-scroller-section">
       <div className="pet-scroller-header">
-        <h3 className="pet-scroller-title">Select Your Pet Companion</h3>
-        <span className="pet-scroller-subtitle">अपने पालतू साथी को चुनें</span>
+        <div>
+          <span className="pet-scroller-eyebrow">Companion Species</span>
+          <h3 className="pet-scroller-title">Tailored Care by Pet Type</h3>
+        </div>
+        <span className="pet-scroller-subtitle">अपने पालतू साथी के अनुसार विशेषज्ञ खोजें</span>
       </div>
 
       <div
@@ -41,31 +76,26 @@ export default function PetCategoryScroller({ selectedCategory, onSelectCategory
         onMouseUp={handleMouseLeaveOrUp}
         onMouseMove={handleMouseMove}
       >
-        <button
-          className={`pet-card ${!selectedCategory ? 'pet-card--active' : ''}`}
-          onClick={() => onSelectCategory(null)}
-        >
-          <span className="pet-card__icon">🐾</span>
-          <span className="pet-card__label">All Pets</span>
-          <span className="pet-card__sublabel">सभी</span>
-        </button>
-
-        {PET_CATEGORIES.map((pet) => {
-          const isSelected = selectedCategory === pet.id;
+        {PET_TYPES.map((pet) => {
+          const isActive = selectedCategory === pet.id;
           return (
             <button
-              key={pet.id}
-              className={`pet-card ${isSelected ? 'pet-card--active' : ''}`}
-              onClick={() => onSelectCategory(isSelected ? null : pet.id)}
+              key={pet.label}
+              type="button"
+              className={`pet-card ${isActive ? 'pet-card--active' : ''}`}
+              onClick={() => onSelectCategory(pet.id)}
             >
-              <span className="pet-card__icon">{pet.emoji}</span>
-              <span className="pet-card__label">{pet.label}</span>
-              <span className="pet-card__sublabel">{pet.labelHi}</span>
-              {isSelected && <span className="pet-card__indicator" />}
+              <div className="pet-card__media">
+                <img src={pet.img} alt={pet.label} className="pet-card__image" loading="lazy" />
+              </div>
+              <div className="pet-card__info">
+                <span className="pet-card__label">{pet.label}</span>
+                <span className="pet-card__sublabel">{pet.labelHi}</span>
+              </div>
             </button>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }

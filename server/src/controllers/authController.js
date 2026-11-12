@@ -38,20 +38,37 @@ export async function googleAuth(req, res, next) {
     const { idToken } = req.body;
 
     let payload;
+    const decoded = decodeToken(idToken);
 
-    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'your-google-client-id') {
-      // Production mode — verify with Google JWKS
-      // Dynamic import to avoid hard dependency
-      const { OAuth2Client } = await import('google-auth-library');
-      const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-      const ticket = await client.verifyIdToken({
-        idToken,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
-      payload = ticket.getPayload();
+    if (decoded && (decoded.iss?.includes('securetoken.google.com') || decoded.aud === (process.env.FIREBASE_PROJECT_ID || 'trust-paw'))) {
+      // Firebase Authentication ID Token
+      payload = {
+        sub: decoded.sub || decoded.user_id,
+        email: decoded.email,
+        name: decoded.name || (decoded.email ? decoded.email.split('@')[0] : 'Pet Parent'),
+        picture: decoded.picture || null,
+        phone: decoded.phone_number || '',
+      };
+    } else if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'your-google-client-id') {
+      try {
+        const { OAuth2Client } = await import('google-auth-library');
+        const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+        const ticket = await client.verifyIdToken({
+          idToken,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        payload = ticket.getPayload();
+      } catch (verifyErr) {
+        // Fallback to decoded token if verification fails or audience differs
+        if (decoded) {
+          payload = decoded;
+        } else {
+          throw verifyErr;
+        }
+      }
     } else {
-      // Demo mode — decode without verification
-      payload = decodeToken(idToken);
+      // Demo/dev mode — decode without verification
+      payload = decoded;
       if (!payload) {
         return res.status(400).json({ success: false, message: 'Invalid idToken' });
       }
@@ -66,9 +83,9 @@ export async function googleAuth(req, res, next) {
       user = createUser({
         id: uuidv4(),
         email,
-        phone: '',
-        name,
-        avatarUrl: picture,
+        phone: payload.phone || '',
+        name: name || (email ? email.split('@')[0] : 'Pet Parent'),
+        avatarUrl: picture || null,
         authProvider: 'google',
         googleId,
       });

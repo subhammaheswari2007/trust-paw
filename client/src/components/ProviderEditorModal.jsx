@@ -37,12 +37,21 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
   const [error, setError] = useState('');
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    let finalVal = value;
+    if (field === 'imageUrl' && typeof value === 'string') {
+      const gdriveMatch = value.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (gdriveMatch) {
+        finalVal = `https://drive.google.com/uc?export=view&id=${gdriveMatch[1]}`;
+      } else if (value.includes('dropbox.com') && value.includes('dl=0')) {
+        finalVal = value.replace('dl=0', 'raw=1');
+      }
+    }
+    setFormData((prev) => ({ ...prev, [field]: finalVal }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.phone.trim()) {
+    if (!formData.name?.trim() || !formData.phone?.trim()) {
       setError('Please provide at least a Doctor Name and Phone Number.');
       return;
     }
@@ -54,29 +63,29 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
       // Build structured payload
       const payload = {
         id: formData.id || 'prov_' + Date.now(),
-        name: formData.name.trim(),
-        clinicName: formData.clinicName.trim(),
-        category: formData.category,
-        city: formData.city.trim(),
-        area: formData.area.trim(),
-        address: formData.address.trim(),
-        phone: formData.phone.trim(),
-        email: formData.email.trim(),
-        imageUrl: formData.imageUrl.trim(),
+        name: (formData.name || '').trim(),
+        clinicName: (formData.clinicName || '').trim(),
+        category: formData.category || 'veterinary',
+        city: (formData.city || '').trim(),
+        area: (formData.area || '').trim(),
+        address: (formData.address || '').trim(),
+        phone: (formData.phone || '').trim(),
+        email: (formData.email || '').trim(),
+        imageUrl: (formData.imageUrl || '').trim(),
         rating: Number(formData.rating) || 4.5,
         reviewCount: Number(formData.reviewCount) || 0,
         yearsExperience: Number(formData.yearsExperience) || 1,
         isEmergency: Boolean(formData.isEmergency),
         is24x7: Boolean(formData.is24x7),
-        specializations: formData.specializations
+        specializations: (formData.specializations || '')
           .split(',')
           .map((s) => s.trim())
           .filter(Boolean),
-        languages: formData.languages
+        languages: (formData.languages || '')
           .split(',')
           .map((l) => l.trim())
           .filter(Boolean),
-        availableSlots: formData.availableSlots
+        availableSlots: (formData.availableSlots || '')
           .split(',')
           .map((slot) => slot.trim())
           .filter(Boolean),

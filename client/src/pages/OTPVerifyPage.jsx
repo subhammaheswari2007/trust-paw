@@ -15,7 +15,6 @@ export default function OTPVerifyPage() {
   const phone = sessionStorage.getItem('tp_pending_phone') || '';
   const otpId = sessionStorage.getItem('tp_otp_id');
 
-  // Countdown timer
   useEffect(() => {
     if (timeLeft <= 0) return;
     const interval = setInterval(() => {
@@ -36,12 +35,10 @@ export default function OTPVerifyPage() {
     nextDigits[index] = clean;
     setDigits(nextDigits);
 
-    // Auto-advance
     if (clean && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Auto-verify if all 6 filled
     if (clean && nextDigits.every((d) => d !== '')) {
       const fullOTP = nextDigits.join('');
       sessionStorage.setItem('tp_entered_otp', fullOTP);
@@ -76,7 +73,7 @@ export default function OTPVerifyPage() {
     e.preventDefault();
     const fullOTP = digits.join('');
     if (fullOTP.length !== 6) {
-      setError('Please enter all 6 digits of the OTP');
+      setError('Please enter all 6 digits of the OTP code');
       return;
     }
     sessionStorage.setItem('tp_entered_otp', fullOTP);
@@ -102,17 +99,23 @@ export default function OTPVerifyPage() {
 
   return (
     <div className="otp-page">
-      <div className="otp-card glass-card glass-card--lg">
+      <div className="otp-card">
         <button
+          type="button"
           className="otp-back-btn"
           onClick={() => navigate('/login')}
           aria-label="Back to Login"
         >
-          ← Back
+          ← Back to Login
         </button>
 
         <div className="otp-card__header">
-          <div className="otp-card__icon">🔐</div>
+          <div className="otp-icon-mark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
           <h2 className="otp-card__title">Verify 6-Digit OTP</h2>
           <p className="otp-card__subtitle">ईमेल एवं एसएमएस सत्यापन कोड</p>
           <p className="otp-card__sent-info">
@@ -144,26 +147,26 @@ export default function OTPVerifyPage() {
           <div className="otp-timer-box">
             {timeLeft > 0 ? (
               <span className="otp-timer">
-                ⏳ OTP expires in <strong>{formatTimer(timeLeft)}</strong>
+                OTP expires in <strong>{formatTimer(timeLeft)}</strong>
               </span>
             ) : (
               <span className="otp-timer otp-timer--expired">
-                ⚠️ OTP has expired. Please request a new one.
+                OTP has expired. Please request a new one.
               </span>
             )}
           </div>
 
           <button
             type="submit"
-            className="primary-btn otp-submit-btn"
+            className="btn-primary otp-submit-btn"
             disabled={digits.some((d) => d === '')}
           >
-            Verify OTP & Continue / सत्यापित करें →
+            Verify OTP & Continue →
           </button>
         </form>
 
         <div className="otp-resend-row">
-          <span>Didn't receive the code? </span>
+          <span>Didn't receive the verification code? </span>
           <button
             type="button"
             className="otp-resend-btn"

@@ -1,35 +1,36 @@
-.tts-button {
+.tts-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-terracotta-light);
+  border: 1px solid rgba(201, 141, 114, 0.4);
+  color: var(--color-terracotta-dark);
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
-  vertical-align: middle;
-  padding: 0;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
-.tts-button:hover {
-  background: rgba(45, 90, 90, 0.3);
-  transform: scale(1.1);
+.tts-btn:hover {
+  background-color: var(--color-terracotta);
+  color: #FFFFFF;
+  border-color: var(--color-terracotta);
 }
 
-.tts-button--speaking {
-  animation: tts-pulse 0.8s ease-in-out infinite;
-  background: rgba(45, 90, 90, 0.35);
+.tts-btn--speaking {
+  background-color: var(--color-terracotta);
+  color: #FFFFFF;
+  border-color: var(--color-terracotta);
 }
 
-.tts-button--disabled {
-  opacity: 0.4;
+.tts-btn--disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tts-button--speaking {
-    animation: none;
-  }
+.tts-btn__label {
+  font-size: 11.5px;
 }

@@ -11,9 +11,15 @@ import {
   adminVerifyPasscode,
   adminSaveProvider,
   adminDeleteProvider,
+  getSettings,
+  adminSaveSettings,
 } from '../controllers/providerController.js';
 
 const router = Router();
+
+// ─── Settings Endpoints ────────────────────────────────────────────────────
+router.get('/settings', getSettings);
+router.post('/admin/settings', adminSaveSettings);
 
 // ─── Admin Endpoints (Passcode Protected) ──────────────────────────────────
 router.post('/admin/verify', adminVerifyPasscode);

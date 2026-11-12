@@ -10,7 +10,7 @@ export default function VerificationLoader() {
 
   useEffect(() => {
     const startTime = performance.now();
-    const duration = 3500; // 3.5 seconds as configured
+    const duration = 2800; // 2.8s smooth verification sequence
 
     const frame = (currentTime) => {
       const elapsed = currentTime - startTime;
@@ -36,7 +36,7 @@ export default function VerificationLoader() {
       } else {
         setTimeout(() => {
           navigate('/', { replace: true });
-        }, 300);
+        }, 200);
       }
     };
 
@@ -46,11 +46,18 @@ export default function VerificationLoader() {
 
   return (
     <div className="verification-page">
-      <div className="verification-card glass-card glass-card--lg">
+      <div className="verification-card">
         <div className="verification-brand">
-          <span className="verification-brand__logo">🐾</span>
-          <h1 className="verification-brand__name">TrustPaw</h1>
-          <span className="verification-brand__badge">Security Verification</span>
+          <div className="verification-logo-mark">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 2.5 3 4 2-1.5 3-2.5 3-4a3 3 0 0 0-3-3z"/>
+              <path d="M19 8a2.5 2.5 0 0 0-2.5 2.5c0 1.2.8 2 2.5 3.5 1.7-1.5 2.5-2.3 2.5-3.5A2.5 2.5 0 0 0 19 8z"/>
+              <path d="M5 8a2.5 2.5 0 0 1 2.5 2.5c0 1.2-.8 2-2.5 3.5C3.3 12.5 2.5 11.7 2.5 10.5A2.5 2.5 0 0 1 5 8z"/>
+              <path d="M12 11c-3.3 0-6 2.7-6 6a5 5 0 0 0 10 0c0-3.3-2.7-6-4-6z"/>
+            </svg>
+          </div>
+          <h1 className="verification-brand-name">TrustPaw</h1>
+          <span className="verification-badge">Security Verification</span>
         </div>
 
         <div className="verification-status-box">
@@ -58,22 +65,17 @@ export default function VerificationLoader() {
           <p className="verification-status-text-hi">{stageTextHi}</p>
         </div>
 
-        {/* Progress Container with sliding TrustPaw logo */}
-        <div className="verification-track">
+        {/* Progress bar */}
+        <div className="verification-progress-track">
           <div
-            className="verification-bar"
+            className="verification-progress-bar"
             style={{ width: `${progress}%` }}
-          >
-            {/* Sliding TrustPaw logo pill gliding smoothly at the head of the progress bar */}
-            <div className="verification-sliding-logo">
-              <span className="sliding-paw">🐾</span>
-            </div>
-          </div>
+          />
         </div>
 
-        <div className="verification-footer">
-          <span className="verification-percent">{progress}%</span>
-          <span className="verification-lock">🔒 256-bit AES Encrypted</span>
+        <div className="verification-progress-meta">
+          <span>Encrypted Session</span>
+          <span className="verification-pct">{progress}%</span>
         </div>
       </div>
     </div>

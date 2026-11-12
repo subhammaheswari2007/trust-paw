@@ -35,7 +35,7 @@ export default function ProviderDetailPage() {
 
   const handleConfirmBooking = async () => {
     if (!selectedBooking.date || !selectedBooking.slot) {
-      alert('Please select both a date and a time slot / कृपया दिनांक व समय चुनें');
+      alert('Please select both a consultation date and an available time slot.');
       return;
     }
 
@@ -58,7 +58,7 @@ export default function ProviderDetailPage() {
       setConfirmedBooking(bData);
       setBookingSuccess(true);
 
-      // Direct instant WhatsApp forwarding to the doctor's phone number
+      // Forward to WhatsApp
       if (provider.phone) {
         const { url } = buildWhatsAppBookingUrl({
           phone: provider.phone,
@@ -73,7 +73,7 @@ export default function ProviderDetailPage() {
         window.open(url, '_blank');
       }
     } catch (err) {
-      // In demo mode, simulate booking creation
+      // Demo fallback
       const bData = {
         id: 'b_' + Date.now().toString().slice(-6),
         bookingDate: selectedBooking.date,
@@ -101,20 +101,20 @@ export default function ProviderDetailPage() {
 
   if (loading) {
     return (
-      <div className="provider-detail-loading">
-        <span className="loading-spinner">🐾</span>
-        <p>Loading provider profile & real-time slot availability...</p>
+      <div className="detail-loading-box">
+        <div className="loading-spinner-circle"></div>
+        <p>Loading practitioner profile & real-time calendar...</p>
       </div>
     );
   }
 
   if (error || !provider) {
     return (
-      <div className="provider-detail-error glass-card">
-        <h2>Provider Not Found</h2>
+      <div className="detail-error-card">
+        <h2>Practitioner Not Found</h2>
         <p>{error || 'The requested specialist profile could not be loaded.'}</p>
-        <button className="primary-btn" onClick={() => navigate('/providers')}>
-          Back to Directory / सूची पर वापस जाएं
+        <button className="btn-secondary" onClick={() => navigate('/providers')}>
+          ← Return to Directory
         </button>
       </div>
     );
@@ -123,130 +123,168 @@ export default function ProviderDetailPage() {
   return (
     <div className="provider-detail-page">
       <div className="provider-detail-container">
-        <button className="back-link" onClick={() => navigate(-1)}>
-          ← Back to Results / वापस जाएं
+        {/* Navigation Breadcrumb */}
+        <button className="back-link-btn" onClick={() => navigate(-1)}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+          <span>Back to Specialists</span>
         </button>
 
-        {/* Hero Banner Card */}
-        <div className="detail-hero glass-card glass-card--lg">
-          <div className="detail-hero__media">
-            <img
-              src={provider.imageUrl || 'https://images.unsplash.com/photo-1628009368231-7bb3cfcb0def?w=600&h=600&fit=crop'}
-              alt={provider.name}
-              className="detail-hero__img"
-            />
-            {provider.isEmergency && (
-              <span className="emergency-ribbon">🚨 24/7 Emergency SOS Active</span>
-            )}
-          </div>
-
-          <div className="detail-hero__content">
-            <div className="detail-hero__tag-row">
-              <span className="category-badge">{provider.category.toUpperCase()}</span>
-              <span className="experience-badge">🎖️ {provider.yearsExperience}+ Years Experience</span>
+        {/* Doctor & Facility Hero Card */}
+        <div className="detail-hero-card">
+          <div className="detail-hero-grid">
+            <div className="detail-hero-media">
+              <img
+                src={provider.imageUrl || 'https://images.unsplash.com/photo-1628009368231-7bb3cfcb0def?w=600&h=600&fit=crop'}
+                alt={provider.name}
+                className="detail-hero-img"
+              />
+              {provider.isEmergency && (
+                <span className="emergency-badge">
+                  <span className="emergency-dot"></span> 24/7 Emergency Trauma
+                </span>
+              )}
             </div>
 
-            <h1 className="detail-hero__name">{provider.name}</h1>
-            <h2 className="detail-hero__clinic">{provider.clinicName}</h2>
-
-            <div className="detail-hero__rating-row">
-              <div className="rating-pill">
-                ⭐ <strong>{provider.rating}</strong> / 5.0 ({provider.reviewCount} Reviews)
+            <div className="detail-hero-info">
+              <div className="detail-badge-row">
+                <span className="badge badge--terracotta">
+                  {provider.category?.toUpperCase() || 'VETERINARY'}
+                </span>
+                <span className="badge badge--sage">
+                  {provider.yearsExperience}+ Years Clinical Experience
+                </span>
               </div>
-              <span className="city-pill-static">📍 {provider.area}, {provider.city}</span>
-            </div>
 
-            <p className="detail-hero__address">
-              <strong>Full Clinic Address:</strong> {provider.address}
-            </p>
+              <h1 className="detail-name">{provider.name}</h1>
+              <h2 className="detail-clinic">{provider.clinicName}</h2>
 
-            <div className="detail-hero__contact-row">
-              <a href={`tel:${provider.phone}`} className="contact-btn">
-                📞 Call {provider.phone}
-              </a>
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(provider.address)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="directions-btn"
-              >
-                📍 Get Directions
-              </a>
+              <div className="detail-rating-row">
+                <div className="detail-rating-pill">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#C98D72" stroke="#C98D72">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                  <strong>{provider.rating}</strong>
+                  <span>({provider.reviewCount} verified reviews)</span>
+                </div>
+                <span className="detail-city-tag">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  {provider.area ? `${provider.area}, ` : ''}{provider.city}
+                </span>
+              </div>
+
+              <p className="detail-address">
+                <strong>Facility Address:</strong> {provider.address}
+              </p>
+
+              <div className="detail-action-buttons">
+                <a href={`tel:${provider.phone}`} className="btn-secondary">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  <span>Call {provider.phone}</span>
+                </a>
+
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(provider.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                  </svg>
+                  <span>Get Directions</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Two Column Layout for Pricing + Booking */}
-        <div className="detail-body-grid">
-          {/* Left Column: Info & Structured INR Pricing */}
+        {/* Two-Column Clinical Information & Slot Booking */}
+        <div className="detail-layout-grid">
+          {/* Left Column: Focus, Languages & Transparent INR Pricing */}
           <div className="detail-info-col">
             {/* Specializations & Languages */}
-            <div className="info-card glass-card">
-              <h3 className="info-card__title">Clinical Focus & Languages</h3>
-              <div className="info-card__section">
-                <span className="info-label">Specializations:</span>
-                <div className="tags-flex">
+            <div className="info-box">
+              <span className="box-eyebrow">Qualifications & Care</span>
+              <h3 className="box-title">Clinical Focus & Languages</h3>
+
+              <div className="info-subgroup">
+                <span className="info-label">Specializations & Procedures:</span>
+                <div className="tag-cloud">
                   {provider.specializations?.map((spec, i) => (
-                    <span key={i} className="spec-tag">{spec}</span>
+                    <span key={i} className="spec-pill">{spec}</span>
                   ))}
                 </div>
               </div>
 
-              <div className="info-card__section">
+              <div className="info-subgroup">
                 <span className="info-label">Languages Spoken / भाषाएं:</span>
-                <div className="tags-flex">
+                <div className="tag-cloud">
                   {provider.languages?.map((lang, i) => (
-                    <span key={i} className="lang-tag">🗣️ {lang}</span>
+                    <span key={i} className="lang-pill">{lang}</span>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* INR Pricing Breakdown */}
-            <div className="info-card glass-card">
-              <h3 className="info-card__title">
-                INR Pricing Schedule / शुल्क विवरण (₹)
-              </h3>
-              <div className="pricing-table">
+            {/* INR Pricing Schedule */}
+            <div className="info-box">
+              <span className="box-eyebrow">Price Transparency</span>
+              <h3 className="box-title">INR Fee Schedule / शुल्क विवरण (₹)</h3>
+              <p className="box-desc">All consultation fees are standard rates without platform markups.</p>
+
+              <div className="pricing-list">
                 {provider.pricing &&
                   Object.entries(provider.pricing).map(([key, val]) => (
-                    <div key={key} className="pricing-row">
-                      <span className="pricing-service-name">
+                    <div key={key} className="pricing-item">
+                      <span className="pricing-item-name">
                         {key.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase())}
                       </span>
-                      <span className="pricing-service-rate">
+                      <span className="pricing-item-rate">
                         {val.min && val.max
-                          ? `${formatINR(val.min)} - ${formatINR(val.max)}`
+                          ? `${formatINR(val.min)} – ${formatINR(val.max)}`
                           : formatINR(val.min || val.max)}
                       </span>
                     </div>
                   ))}
               </div>
-              <p className="pricing-disclaimer">
-                * Rates are inclusive of basic clinical assessment. Medications and diagnostic lab tests are billed separately.
-              </p>
+              <span className="pricing-note">
+                * Includes physical clinical assessment. Diagnostic blood tests, X-rays, and prescription medicines are billed separately by the clinic.
+              </span>
             </div>
           </div>
 
-          {/* Right Column: Slot Selection & Actions */}
+          {/* Right Column: Appointment Reservation Card */}
           <div className="detail-booking-col">
-            <div className="booking-card glass-card glass-card--lg">
-              <h3 className="booking-card__title">Reserve an Appointment Slot</h3>
-              <p className="booking-card__subtitle">
-                त्वरित स्लॉट बुकिंग अथवा व्हाट्सएप संपर्क
-              </p>
+            <div className="booking-card">
+              <span className="box-eyebrow">Appointment Reservation</span>
+              <h3 className="box-title">Schedule a Consultation</h3>
+              <p className="box-desc">Select a slot to automatically forward to the specialist’s desk.</p>
 
               {bookingSuccess ? (
-                <div className="booking-success-box">
-                  <div className="success-icon">✅</div>
-                  <h4>Appointment Reserved Successfully!</h4>
-                  <p>नियुक्ति सफलतापूर्वक दर्ज हो गई है।</p>
-                  
+                <div className="booking-confirmation-view">
+                  <div className="confirm-icon-circle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3F8A61" strokeWidth="2.5">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                      <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                  </div>
+                  <h4>Consultation Reserved!</h4>
+                  <p className="confirm-desc">
+                    Your appointment has been logged in our system and forwarded directly to the clinic doctor.
+                  </p>
+
                   {provider.phone && (
-                    <div className="instant-forward-card" style={{ margin: '16px 0', padding: '16px', background: 'rgba(37, 211, 102, 0.08)', borderRadius: '12px', border: '1px solid rgba(37, 211, 102, 0.25)' }}>
-                      <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#e2e8f0' }}>
-                        📲 <strong>Direct WhatsApp Forwarded to Doctor:</strong><br />
-                        डॉक्टर/क्लिनिक को सीधे व्हाट्सएप संदेश भेज दिया गया है ({provider.phone})
+                    <div className="confirm-whatsapp-card">
+                      <p>
+                        Direct WhatsApp forwarded to <strong>{provider.name}</strong> ({provider.phone}).
                       </p>
                       <WhatsAppBooking
                         phone={provider.phone}
@@ -256,16 +294,14 @@ export default function ProviderDetailPage() {
                         date={selectedBooking.date}
                         time={selectedBooking.slot}
                         bookingId={confirmedBooking?.id}
-                        buttonText="Open WhatsApp Chat Again / दोबारा व्हाट्सएप खोलें"
+                        buttonText="Open WhatsApp Message Again"
                       />
                     </div>
                   )}
 
-                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '16px' }}>
-                    <button className="primary-btn" onClick={() => navigate('/bookings')}>
-                      View My Appointments / मेरी नियुक्तियां →
-                    </button>
-                  </div>
+                  <button className="btn-primary" style={{ width: '100%', marginTop: '12px' }} onClick={() => navigate('/bookings')}>
+                    View in My Appointments →
+                  </button>
                 </div>
               ) : (
                 <>
@@ -274,21 +310,21 @@ export default function ProviderDetailPage() {
                     onSelectSlot={(selected) => setSelectedBooking(selected)}
                   />
 
-                  <div className="booking-actions">
+                  <div className="booking-submission-group">
                     <button
                       type="button"
-                      className="primary-btn booking-submit-btn"
+                      className="btn-primary"
+                      style={{ width: '100%', padding: '13px' }}
                       onClick={handleConfirmBooking}
                       disabled={bookingSubmitting}
                     >
-                      {bookingSubmitting ? 'Reserving Slot & Forwarding...' : 'Confirm & Instant Forward to Doctor →'}
+                      {bookingSubmitting ? 'Confirming Reservation...' : 'Confirm & Instant Forward →'}
                     </button>
 
-                    <div className="booking-bridge-divider">
-                      <span>OR CONVENIENT ALTERNATIVE</span>
+                    <div className="booking-or-divider">
+                      <span>or book directly on whatsapp</span>
                     </div>
 
-                    {/* Direct WhatsApp Booking Bridge with Doctor Phone */}
                     <WhatsAppBooking
                       phone={provider.phone}
                       clinicName={provider.clinicName}
@@ -296,6 +332,8 @@ export default function ProviderDetailPage() {
                       serviceType={provider.category}
                       date={selectedBooking.date || 'Preferred Day'}
                       time={selectedBooking.slot || 'Morning'}
+                      buttonText="WhatsApp Chat with Doctor"
+                      large={true}
                     />
                   </div>
                 </>

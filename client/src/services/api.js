@@ -135,3 +135,27 @@ export function adminDeleteProvider(id, passcode) {
   });
 }
 
+// ─── Site Settings API ──────────────────────────────────────────────────────
+
+export function getSettings() {
+  return request('/api/v1/providers/settings').catch(() => ({
+    success: true,
+    settings: {
+      heroImageUrl: localStorage.getItem('trustpaw_hero_image') || 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=900&h=700&fit=crop',
+      sosPhone: localStorage.getItem('trustpaw_sos_phone') || '+919725671201',
+      sosHospitalName: localStorage.getItem('trustpaw_sos_name') || 'TrustPaw 24/7 National Emergency Trauma Hotline',
+    },
+  }));
+}
+
+export function adminSaveSettings(settingsData, passcode) {
+  return request('/api/v1/providers/admin/settings', {
+    method: 'POST',
+    headers: {
+      'x-admin-passcode': passcode || sessionStorage.getItem('trustpaw_admin_token') || 'trustpaw2007',
+    },
+    body: JSON.stringify(settingsData),
+  });
+}
+
+

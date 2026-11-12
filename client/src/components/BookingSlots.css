@@ -1,107 +1,147 @@
 .booking-slots-container {
-  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
-.booking-slots__section-title {
-  font-size: 13px;
+.booking-slots__section {
+  display: flex;
+  flex-direction: column;
+}
+
+.booking-slots__header {
+  margin-bottom: 12px;
+}
+
+.slots-eyebrow {
+  display: block;
+  font-size: 10px;
   font-weight: 700;
-  color: var(--color-text-secondary);
-  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-terracotta-dark);
 }
 
+.slots-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--color-navy);
+  margin: 1px 0 0 0;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.slots-subtitle {
+  font-family: var(--font-hindi);
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+
+/* Date Row */
 .booking-slots__date-row {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding-bottom: 8px;
-  margin-bottom: 20px;
+  padding: 2px 2px 8px 2px;
+  scrollbar-width: thin;
 }
 
-.booking-slots__date-pill {
-  flex: 0 0 68px;
-  height: 72px;
+.date-pill {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid var(--glass-border);
-  color: var(--color-text-primary);
+  padding: 8px 10px;
+  min-width: 62px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
-.booking-slots__date-pill:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(232, 184, 109, 0.4);
+.date-pill:hover {
+  border-color: var(--color-border-strong);
+  background-color: #FFFFFF;
 }
 
-.booking-slots__date-pill--active {
-  background: var(--color-primary);
-  border-color: var(--color-secondary);
-  box-shadow: 0 4px 14px rgba(232, 184, 109, 0.25);
+.date-pill--active {
+  background-color: var(--color-navy);
+  color: #FFFFFF;
+  border-color: var(--color-navy);
+  box-shadow: 0 4px 12px rgba(38, 59, 80, 0.15);
 }
 
-.booking-slots__date-weekday {
-  font-size: 11px;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-}
-
-.booking-slots__date-pill--active .booking-slots__date-weekday {
-  color: var(--color-secondary);
-}
-
-.booking-slots__date-num {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--color-text-primary);
-}
-
-.booking-slots__date-pill--active .booking-slots__date-num {
-  color: #fff;
-}
-
-.booking-slots__date-month {
+.date-pill__weekday {
   font-size: 10px;
-  color: var(--color-text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
 }
 
+.date-pill__num {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.date-pill__month {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.date-pill--active .date-pill__weekday,
+.date-pill--active .date-pill__month {
+  color: #F8F7F3;
+}
+
+/* Time Slot Grid */
 .booking-slots__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 480px) {
   .booking-slots__grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
-.booking-slots__chip {
-  padding: 10px 8px;
-  text-align: center;
+.time-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--glass-border);
-  color: var(--color-text-primary);
-  font-size: 13px;
-  font-weight: 600;
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-navy);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
-.booking-slots__chip:hover {
-  background: rgba(45, 90, 90, 0.35);
-  border-color: var(--color-secondary);
+.time-chip__icon {
+  stroke: var(--color-text-muted);
 }
 
-.booking-slots__chip--active {
-  background: var(--color-secondary);
-  color: var(--color-bg-dark);
-  border-color: var(--color-secondary);
-  font-weight: 800;
-  box-shadow: 0 4px 12px rgba(232, 184, 109, 0.3);
+.time-chip:hover {
+  border-color: var(--color-navy);
+  background-color: #FFFFFF;
+}
+
+.time-chip--active {
+  background-color: var(--color-navy);
+  color: #FFFFFF;
+  border-color: var(--color-navy);
+  box-shadow: 0 2px 8px rgba(38, 59, 80, 0.12);
+}
+
+.time-chip--active .time-chip__icon {
+  stroke: var(--color-terracotta-light);
 }
