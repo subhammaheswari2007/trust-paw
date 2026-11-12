@@ -35,9 +35,25 @@ app.use(
   })
 );
 
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, Postman, server-to-server)
+      if (!origin) return callback(null, true);
+      // Allow if origin is explicitly in allowedOrigins list, or is a Vercel preview/production domain, or localhost
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        /^http:\/\/localhost(:\d+)?$/.test(origin)
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
   })
 );

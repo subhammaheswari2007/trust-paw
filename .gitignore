@@ -42,3 +42,7 @@ lerna-debug.log*
 *.sw?
 .DS_Store
 Thumbs.db
+test-*.cjs
+responsive-audit-screenshots/
+audit-summary.json
+
