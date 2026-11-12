@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as api from '../services/api';
 import { formatDate, formatTime } from '../utils/formatters';
+import { cleanWhatsAppNumber } from '../components/WhatsAppBooking';
 import './BookingsPage.css';
 
 export default function BookingsPage() {
@@ -23,6 +24,7 @@ export default function BookingsPage() {
             id: 'b_demo_1',
             serviceType: 'veterinary',
             providerName: 'Dr. Ananya Sharma (Paws & Claws Clinic)',
+            providerPhone: '+919876543210',
             bookingDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
             timeSlot: '11:00',
             status: 'confirmed',
@@ -32,6 +34,7 @@ export default function BookingsPage() {
             id: 'b_demo_2',
             serviceType: 'grooming',
             providerName: 'Royal Paw Spa & Grooming Studio',
+            providerPhone: '+919812345678',
             bookingDate: new Date(Date.now() + 259200000).toISOString().split('T')[0],
             timeSlot: '15:00',
             status: 'pending',
@@ -116,9 +119,22 @@ export default function BookingsPage() {
                 </div>
 
                 <div className="booking-item-actions">
+                  {booking.providerPhone && (
+                    <a
+                      href={`https://wa.me/${cleanWhatsAppNumber(booking.providerPhone)}?text=${encodeURIComponent(
+                        `🐾 *TrustPaw Appointment Follow-up*\n\nHello ${booking.providerName || 'Doctor'},\nI am reaching out regarding my scheduled appointment.\n\n🔖 Ref ID: #${String(booking.id).slice(-6)}\n📅 Date: ${booking.bookingDate}\n⏰ Time: ${booking.timeSlot}\n🩺 Service: ${(booking.serviceType || 'pet care').toUpperCase()}\n\nPlease let me know if there are any updates.`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="booking-whatsapp-btn"
+                      title={`Direct WhatsApp to ${booking.providerPhone}`}
+                    >
+                      💬 WhatsApp ({booking.providerPhone})
+                    </a>
+                  )}
                   <button
                     className="booking-action-btn"
-                    onClick={() => alert(`Appointment ID: ${booking.id}\nSupport line: 1800-TRUST-PAW`)}
+                    onClick={() => alert(`Appointment ID: ${booking.id}\nFacility Phone: ${booking.providerPhone || 'N/A'}\nSupport line: 1800-TRUST-PAW`)}
                   >
                     Need Help / सहायता
                   </button>

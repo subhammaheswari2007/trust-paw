@@ -106,3 +106,32 @@ export function addPet(data) {
     body: JSON.stringify(data),
   });
 }
+
+// ─── Master Admin API ───────────────────────────────────────────────────────
+
+export function adminVerify(passcode) {
+  return request('/api/v1/providers/admin/verify', {
+    method: 'POST',
+    body: JSON.stringify({ passcode }),
+  });
+}
+
+export function adminSaveProvider(providerData, passcode) {
+  return request('/api/v1/providers/admin/save', {
+    method: 'POST',
+    headers: {
+      'x-admin-passcode': passcode || sessionStorage.getItem('trustpaw_admin_token') || 'trustpaw2007',
+    },
+    body: JSON.stringify(providerData),
+  });
+}
+
+export function adminDeleteProvider(id, passcode) {
+  return request(`/api/v1/providers/admin/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'x-admin-passcode': passcode || sessionStorage.getItem('trustpaw_admin_token') || 'trustpaw2007',
+    },
+  });
+}
+

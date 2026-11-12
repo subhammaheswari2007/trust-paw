@@ -1,5 +1,12 @@
-import { providers } from '../data/providers.js';
+import {
+  getAllProviders,
+  findProviderById,
+  upsertProvider,
+  deleteProviderById,
+} from '../models/schema.js';
 import { haversineDistance } from '../utils/haversine.js';
+
+const ADMIN_PASSCODE = process.env.ADMIN_SECRET || 'trustpaw2007';
 
 // ─── GET /api/v1/providers ──────────────────────────────────────────────────
 
@@ -7,7 +14,7 @@ export async function listProviders(req, res, next) {
   try {
     const { category, city, lat, lng, sort } = req.query;
 
-    let results = [...providers];
+    let results = getAllProviders();
 
     // Filter by category
     if (category) {
@@ -54,7 +61,8 @@ export async function emergencyProviders(req, res, next) {
   try {
     const { lat, lng } = req.query;
 
-    let results = providers.filter((p) => p.isEmergency && p.is24x7 && p.category === 'veterinary');
+    const all = getAllProviders();
+    let results = all.filter((p) => p.isEmergency && p.is24x7 && p.category === 'veterinary');
 
     const userLat = parseFloat(lat);
     const userLng = parseFloat(lng);
@@ -77,7 +85,7 @@ export async function emergencyProviders(req, res, next) {
 
 export async function getProvider(req, res, next) {
   try {
-    const provider = providers.find((p) => p.id === req.params.id);
+    const provider = findProviderById(req.params.id);
 
     if (!provider) {
       return res.status(404).json({ success: false, message: 'Provider not found' });
@@ -88,3 +96,53 @@ export async function getProvider(req, res, next) {
     next(err);
   }
 }
+
+// ─── ADMIN: POST /api/v1/providers/admin/verify ─────────────────────────────
+
+export async function adminVerifyPasscode(req, res) {
+  const { passcode } = req.body;
+  if (passcode === ADMIN_PASSCODE) {
+    return res.json({ success: true, message: 'Admin passcode verified', token: ADMIN_PASSCODE });
+  }
+  return res.status(401).json({ success: false, message: 'Invalid admin passcode' });
+}
+
+// ─── ADMIN: POST /api/v1/providers/admin/save ───────────────────────────────
+
+export async function adminSaveProvider(req, res, next) {
+  try {
+    const passcode = req.headers['x-admin-passcode'] || req.body.adminPasscode;
+    if (passcode !== ADMIN_PASSCODE) {
+      return res.status(403).json({ success: false, message: 'Unauthorized admin request' });
+    }
+
+    const payload = { ...req.body };
+    delete payload.adminPasscode;
+
+    if (!payload.id) {
+      payload.id = 'prov_' + Date.now();
+    }
+
+    const saved = upsertProvider(payload);
+    res.json({ success: true, message: 'Facility / Doctor saved successfully', provider: saved });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ─── ADMIN: DELETE /api/v1/providers/admin/:id ──────────────────────────────
+
+export async function adminDeleteProvider(req, res, next) {
+  try {
+    const passcode = req.headers['x-admin-passcode'] || req.query.adminPasscode;
+    if (passcode !== ADMIN_PASSCODE) {
+      return res.status(403).json({ success: false, message: 'Unauthorized admin request' });
+    }
+
+    deleteProviderById(req.params.id);
+    res.json({ success: true, message: 'Facility / Doctor deleted successfully' });
+  } catch (err) {
+    next(err);
+  }
+}
+

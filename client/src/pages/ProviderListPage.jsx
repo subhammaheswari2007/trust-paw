@@ -11,6 +11,7 @@ export default function ProviderListPage() {
   const { coords } = useLocationHook();
 
   const currentCategory = searchParams.get('category') || '';
+  const searchQuery = searchParams.get('q') || '';
   const [selectedCity, setSelectedCity] = useState('All');
   const [sortBy, setSortBy] = useState('rating');
   const [providers, setProviders] = useState([]);
@@ -56,6 +57,18 @@ export default function ProviderListPage() {
     return found ? `${found.emoji} ${found.label} (${found.labelHi})` : 'Services Directory';
   };
 
+  const displayedProviders = providers.filter((p) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      p.name?.toLowerCase().includes(q) ||
+      p.clinicName?.toLowerCase().includes(q) ||
+      p.city?.toLowerCase().includes(q) ||
+      p.area?.toLowerCase().includes(q) ||
+      (Array.isArray(p.specializations) && p.specializations.some((s) => s.toLowerCase().includes(q)))
+    );
+  });
+
   return (
     <div className="provider-list-page">
       <div className="provider-list-container">
@@ -64,7 +77,7 @@ export default function ProviderListPage() {
           <div>
             <h1 className="provider-list-title">{getCategoryTitle()}</h1>
             <p className="provider-list-subtitle">
-              Verified pet health, grooming, and training specialists across India
+              {searchQuery ? `Showing matching results for "${searchQuery}"` : 'Verified pet health, grooming, and training specialists across India'}
             </p>
           </div>
 
@@ -119,7 +132,7 @@ export default function ProviderListPage() {
 
         {/* Results Counter */}
         <div className="results-count">
-          Showing {providers.length} verified specialists
+          Showing {displayedProviders.length} verified specialists {selectedCity !== 'All' ? `in ${selectedCity}` : ''}
         </div>
 
         {/* Directory Grid */}
@@ -128,23 +141,25 @@ export default function ProviderListPage() {
             <span className="loading-spinner">🐾</span>
             <p>Fetching verified specialists...</p>
           </div>
-        ) : providers.length === 0 ? (
+        ) : displayedProviders.length === 0 ? (
           <div className="list-empty-state glass-card">
-            <h3>No providers match your criteria</h3>
-            <p>Try clearing filters or selecting a different city.</p>
+            <h3>No providers match your search</h3>
+            <p>Try clearing your search terms or selecting a different city.</p>
             <button
               className="primary-btn"
               onClick={() => {
                 setSelectedCity('All');
                 handleCategoryChange('');
+                searchParams.delete('q');
+                setSearchParams(searchParams);
               }}
             >
-              Reset Filters / फ़िल्टर रीसेट करें
+              Reset All Filters / सभी फ़िल्टर रीसेट करें
             </button>
           </div>
         ) : (
           <div className="providers-directory-grid">
-            {providers.map((p) => (
+            {displayedProviders.map((p) => (
               <ProviderCard key={p.id || p._id} provider={p} />
             ))}
           </div>

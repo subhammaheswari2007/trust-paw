@@ -321,8 +321,11 @@ export default function EasyAssistFlow() {
             {/* Direct WhatsApp Action Button */}
             <div className="whatsapp-action-wrapper">
               <WhatsAppBooking
+                phone="+919725671201"
                 serviceType={selectedService || 'pet care'}
-                providerName="TrustPaw Senior Support"
+                providerName="TrustPaw Priority Care"
+                petName={getPetDisplay()}
+                buttonText="📲 Direct WhatsApp Booking (+919725671201) / सीधे व्हाट्सएप पर भेजें"
                 large={true}
               />
             </div>

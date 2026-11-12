@@ -15,6 +15,7 @@ import ProviderDetailPage from './pages/ProviderDetailPage';
 import BookingsPage from './pages/BookingsPage';
 import ProfilePage from './pages/ProfilePage';
 import EasyAssistFlow from './pages/EasyAssistFlow';
+import AdminPortalPage from './pages/AdminPortalPage';
 
 import './App.css';
 
@@ -30,8 +31,6 @@ export default function App() {
       {!isAuthPage && <Header />}
 
       <div className={!isAuthPage ? 'app-layout' : ''}>
-        {!isAuthPage && <Sidebar />}
-
         <main className={!isAuthPage ? 'app-layout__main' : ''}>
           <Routes>
             {/* Public Auth Routes */}
@@ -89,6 +88,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/admin" element={<AdminPortalPage />} />
 
             {/* Fallback redirect */}
             <Route

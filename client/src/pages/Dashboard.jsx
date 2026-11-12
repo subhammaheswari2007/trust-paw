@@ -48,20 +48,60 @@ export default function Dashboard() {
   }, [coords, selectedPetCategory]);
 
   const userName = user?.name ? user.name.split(' ')[0] : 'Pet Parent';
+  const [heroSearch, setHeroSearch] = useState('');
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (heroSearch.trim()) {
+      navigate(`/providers?q=${encodeURIComponent(heroSearch.trim())}`);
+    } else {
+      navigate('/providers');
+    }
+  };
 
   return (
     <div className="dashboard-page">
       <div className="dashboard-container">
-        {/* Top Greeting Header */}
-        <section className="dashboard-welcome">
-          <div className="dashboard-welcome__text">
-            <h1 className="dashboard-welcome__greeting">
-              Namaste, {userName}! <span className="greeting-paw">🐾</span>
+        {/* Aesthetic Pet Store Hero Banner */}
+        <section className="dashboard-hero-banner glass-card glass-card--lg">
+          <div className="dashboard-hero-content">
+            <span className="hero-pill-badge">✨ India's Most Trusted Pet Health & Care Network</span>
+            <h1 className="dashboard-hero-title">
+              Exceptional Care & Wellness for Every Companion 🐾
             </h1>
-            <p className="dashboard-welcome__hindi">
-              नमस्ते! आज आपके पालतू साथी की क्या देखभाल करनी है?
+            <p className="dashboard-hero-subtitle">
+              Book verified veterinary surgeons, luxury doorstep grooming, certified trainers, and trusted boarding across top Indian cities.
             </p>
-            <span className="dashboard-welcome__date">{todayStr}</span>
+
+            {/* Search Bar */}
+            <form onSubmit={handleSearchSubmit} className="dashboard-hero-search">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder="Search clinics, veterinarians, groomers, or city (e.g. Bandra, Powai)..."
+                value={heroSearch}
+                onChange={(e) => setHeroSearch(e.target.value)}
+                className="hero-search-input"
+              />
+              <button type="submit" className="hero-search-btn">
+                Find Care →
+              </button>
+            </form>
+
+            {/* Quick Trust Badges */}
+            <div className="hero-trust-badges">
+              <span className="trust-badge-item">⭐ <strong>4.9/5</strong> Rating (15k+ Reviews)</span>
+              <span className="trust-badge-item">🏥 <strong>100%</strong> Verified Clinics</span>
+              <span className="trust-badge-item">💬 <strong>Instant</strong> WhatsApp Booking</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Welcome Subheader & Easy Assist Option */}
+        <div className="dashboard-subheader-row">
+          <div className="dashboard-welcome-pill">
+            <span>👋 Welcome, <strong>{userName}</strong>!</span>
+            <span className="dashboard-date-tag">📅 {todayStr}</span>
           </div>
 
           <div
@@ -74,12 +114,12 @@ export default function Dashboard() {
                 सुगम सेवा मोड | Easy Assist
               </span>
               <span className="easy-assist-banner__sub">
-                Guided questionnaire with voice & WhatsApp booking
+                Guided questionnaire with voice & WhatsApp
               </span>
             </div>
             <span className="easy-assist-banner__arrow">→</span>
           </div>
-        </section>
+        </div>
 
         {/* 1. Pet Category Selector */}
         <PetCategoryScroller
@@ -87,7 +127,7 @@ export default function Dashboard() {
           onSelectCategory={(cat) => setSelectedPetCategory(cat)}
         />
 
-        {/* 2. Services Grid (Explicitly NO PRICING on main grid) */}
+        {/* 2. Services Grid */}
         <ServicesGrid />
 
         {/* 3. Top Rated Providers Near You */}

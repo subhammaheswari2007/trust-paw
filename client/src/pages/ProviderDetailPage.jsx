@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import * as api from '../services/api';
 import { formatINR } from '../utils/formatters';
 import BookingSlots from '../components/BookingSlots';
-import WhatsAppBooking from '../components/WhatsAppBooking';
+import WhatsAppBooking, { buildWhatsAppBookingUrl } from '../components/WhatsAppBooking';
 import './ProviderDetailPage.css';
 
 export default function ProviderDetailPage() {
@@ -15,6 +15,7 @@ export default function ProviderDetailPage() {
   const [error, setError] = useState('');
   const [selectedBooking, setSelectedBooking] = useState({ date: null, slot: null });
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [confirmedBooking, setConfirmedBooking] = useState(null);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
 
   useEffect(() => {
@@ -40,23 +41,59 @@ export default function ProviderDetailPage() {
 
     try {
       setBookingSubmitting(true);
-      await api.createBooking({
+      const res = await api.createBooking({
         providerId: provider.id,
         serviceType: provider.category,
         bookingDate: selectedBooking.date,
         timeSlot: selectedBooking.slot,
         notes: 'Regular checkup booked via web portal',
       });
+
+      const bData = res.booking || res.data?.booking || {
+        id: 'b_' + Date.now().toString().slice(-6),
+        bookingDate: selectedBooking.date,
+        timeSlot: selectedBooking.slot,
+      };
+
+      setConfirmedBooking(bData);
       setBookingSuccess(true);
-      setTimeout(() => {
-        navigate('/bookings');
-      }, 2000);
+
+      // Direct instant WhatsApp forwarding to the doctor's phone number
+      if (provider.phone) {
+        const { url } = buildWhatsAppBookingUrl({
+          phone: provider.phone,
+          providerName: provider.name,
+          clinicName: provider.clinicName,
+          serviceType: provider.category,
+          date: selectedBooking.date,
+          time: selectedBooking.slot,
+          bookingId: bData.id,
+          notes: 'Booked on TrustPaw Web Portal',
+        });
+        window.open(url, '_blank');
+      }
     } catch (err) {
       // In demo mode, simulate booking creation
+      const bData = {
+        id: 'b_' + Date.now().toString().slice(-6),
+        bookingDate: selectedBooking.date,
+        timeSlot: selectedBooking.slot,
+      };
+      setConfirmedBooking(bData);
       setBookingSuccess(true);
-      setTimeout(() => {
-        navigate('/bookings');
-      }, 2000);
+
+      if (provider.phone) {
+        const { url } = buildWhatsAppBookingUrl({
+          phone: provider.phone,
+          providerName: provider.name,
+          clinicName: provider.clinicName,
+          serviceType: provider.category,
+          date: selectedBooking.date,
+          time: selectedBooking.slot,
+          bookingId: bData.id,
+        });
+        window.open(url, '_blank');
+      }
     } finally {
       setBookingSubmitting(false);
     }
@@ -203,8 +240,32 @@ export default function ProviderDetailPage() {
                 <div className="booking-success-box">
                   <div className="success-icon">✅</div>
                   <h4>Appointment Reserved Successfully!</h4>
-                  <p>पुष्टि संदेश एसएमएस व ईमेल द्वारा प्रेषित कर दिया गया है।</p>
-                  <span>Redirecting to your bookings...</span>
+                  <p>नियुक्ति सफलतापूर्वक दर्ज हो गई है।</p>
+                  
+                  {provider.phone && (
+                    <div className="instant-forward-card" style={{ margin: '16px 0', padding: '16px', background: 'rgba(37, 211, 102, 0.08)', borderRadius: '12px', border: '1px solid rgba(37, 211, 102, 0.25)' }}>
+                      <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#e2e8f0' }}>
+                        📲 <strong>Direct WhatsApp Forwarded to Doctor:</strong><br />
+                        डॉक्टर/क्लिनिक को सीधे व्हाट्सएप संदेश भेज दिया गया है ({provider.phone})
+                      </p>
+                      <WhatsAppBooking
+                        phone={provider.phone}
+                        providerName={provider.name}
+                        clinicName={provider.clinicName}
+                        serviceType={provider.category}
+                        date={selectedBooking.date}
+                        time={selectedBooking.slot}
+                        bookingId={confirmedBooking?.id}
+                        buttonText="Open WhatsApp Chat Again / दोबारा व्हाट्सएप खोलें"
+                      />
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '16px' }}>
+                    <button className="primary-btn" onClick={() => navigate('/bookings')}>
+                      View My Appointments / मेरी नियुक्तियां →
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -220,17 +281,19 @@ export default function ProviderDetailPage() {
                       onClick={handleConfirmBooking}
                       disabled={bookingSubmitting}
                     >
-                      {bookingSubmitting ? 'Reserving Slot...' : 'Confirm Appointment / स्लॉट बुक करें →'}
+                      {bookingSubmitting ? 'Reserving Slot & Forwarding...' : 'Confirm & Instant Forward to Doctor →'}
                     </button>
 
                     <div className="booking-bridge-divider">
                       <span>OR CONVENIENT ALTERNATIVE</span>
                     </div>
 
-                    {/* WhatsApp Booking Bridge */}
+                    {/* Direct WhatsApp Booking Bridge with Doctor Phone */}
                     <WhatsAppBooking
-                      serviceType={provider.category}
+                      phone={provider.phone}
+                      clinicName={provider.clinicName}
                       providerName={provider.name}
+                      serviceType={provider.category}
                       date={selectedBooking.date || 'Preferred Day'}
                       time={selectedBooking.slot || 'Morning'}
                     />

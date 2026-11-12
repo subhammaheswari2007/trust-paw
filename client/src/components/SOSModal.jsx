@@ -84,6 +84,18 @@ export default function SOSModal({ onClose }) {
                   >
                     📞 Call Now
                   </a>
+                  {hospital.phone && (
+                    <a
+                      href={`https://wa.me/${hospital.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                        `🚨 *EMERGENCY PET SOS*\n\nHello ${hospital.name},\nI require urgent medical care for my pet. Please confirm if an emergency doctor is available right now!\n\n- Sent via TrustPaw 24/7 SOS`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="sos-modal__wa-btn"
+                    >
+                      💬 WhatsApp SOS
+                    </a>
+                  )}
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(hospital.address)}`}
                     target="_blank"

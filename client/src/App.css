@@ -119,17 +119,23 @@ body {
 /* Layout helpers */
 .app-layout {
   display: flex;
-  min-height: 100vh;
+  flex-direction: column;
+  min-height: calc(100vh - 65px);
 }
 
 .app-layout__main {
   flex: 1;
-  padding-bottom: 80px;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 16px 80px 16px;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1024px) {
   .app-layout__main {
-    margin-left: 260px;
-    padding-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px 40px 24px;
   }
 }
