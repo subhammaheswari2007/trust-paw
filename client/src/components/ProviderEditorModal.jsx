@@ -99,6 +99,7 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
       setError('');
 
       // Build structured payload
+      const cleanImageUrl = (formData.imageUrl || '').trim().replace(/^["']|["']$/g, '');
       const payload = {
         id: formData.id || provider?.id || ('prov_' + Date.now()),
         name: (formData.name || '').trim(),
@@ -109,7 +110,7 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
         address: (formData.address || '').trim(),
         phone: (formData.phone || '').trim(),
         email: (formData.email || '').trim(),
-        imageUrl: (formData.imageUrl || '').trim(),
+        imageUrl: cleanImageUrl,
         rating: Number(formData.rating) || 4.5,
         reviewCount: Number(formData.reviewCount) || 0,
         yearsExperience: Number(formData.yearsExperience) || 1,
@@ -231,7 +232,7 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
               <input
                 id="provider-imageUrl"
                 name="imageUrl"
-                type="url"
+                type="text"
                 className="editor-input"
                 placeholder="https://images.unsplash.com/..."
                 value={formData.imageUrl}

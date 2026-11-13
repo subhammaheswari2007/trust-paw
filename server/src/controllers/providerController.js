@@ -156,7 +156,7 @@ export async function getSettings(req, res, next) {
     res.json({
       success: true,
       settings: {
-        heroImageUrl: current.heroImageUrl || 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=900&h=700&fit=crop',
+        heroImageUrl: current.heroImageUrl || 'https://res.cloudinary.com/qhmx80db/image/upload/v1794515619/WIN_20260623_03_15_58_Pro.jpg',
         sosPhone: current.sosPhone || '+919725671201',
         sosHospitalName: current.sosHospitalName || 'TrustPaw 24/7 National Emergency Trauma Hotline',
         ...current,

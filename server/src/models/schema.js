@@ -147,48 +147,32 @@ export function initTables() {
     );
   `);
 
-  // Seed default providers if table is empty
+  // Seed and synchronize default providers
   try {
-    const countRow = db.prepare('SELECT COUNT(*) as count FROM providers').get();
-    if (!countRow || countRow.count === 0) {
-      console.log('🌱 Seeding providers table from initial catalog...');
-      const insertStmt = db.prepare(`
-        INSERT INTO providers (
-          id, name, clinic_name, category, city, area, address, phone, email,
-          rating, review_count, years_experience, specializations, is_emergency, is_24x7,
-          lat, lng, image_url, pricing, available_slots, languages
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      for (const p of defaultProviders) {
-        insertStmt.run(
-          p.id,
-          p.name,
-          p.clinicName || '',
-          p.category || 'veterinary',
-          p.city || 'Mumbai',
-          p.area || '',
-          p.address || '',
-          p.phone || '',
-          p.email || '',
-          p.rating || 4.5,
-          p.reviewCount || 0,
-          p.yearsExperience || 1,
-          JSON.stringify(p.specializations || []),
-          p.isEmergency ? 1 : 0,
-          p.is24x7 ? 1 : 0,
-          p.lat || 0,
-          p.lng || 0,
-          p.imageUrl || '',
-          JSON.stringify(p.pricing || {}),
-          JSON.stringify(p.availableSlots || []),
-          JSON.stringify(p.languages || [])
-        );
-      }
-      console.log(`✅ Providers table populated with ${defaultProviders.length} facilities.`);
+    for (const p of defaultProviders) {
+      upsertProvider(p);
     }
+    console.log(`✅ Providers table populated and synchronized with ${defaultProviders.length} facilities.`);
   } catch (err) {
     console.error('Error seeding providers:', err.message);
+  }
+
+  // Seed default site settings if not present
+  try {
+    const heroRow = db.prepare("SELECT value FROM site_settings WHERE key = 'heroImageUrl'").get();
+    if (!heroRow || !heroRow.value) {
+      setSiteSetting('heroImageUrl', 'https://res.cloudinary.com/qhmx80db/image/upload/v1794515619/WIN_20260623_03_15_58_Pro.jpg');
+    }
+    const sosPhoneRow = db.prepare("SELECT value FROM site_settings WHERE key = 'sosPhone'").get();
+    if (!sosPhoneRow || !sosPhoneRow.value) {
+      setSiteSetting('sosPhone', '+919725671201');
+    }
+    const sosNameRow = db.prepare("SELECT value FROM site_settings WHERE key = 'sosHospitalName'").get();
+    if (!sosNameRow || !sosNameRow.value) {
+      setSiteSetting('sosHospitalName', 'TrustPaw 24/7 National Emergency Trauma Hotline');
+    }
+  } catch (err) {
+    console.error('Error seeding site settings:', err.message);
   }
 
   console.log('✅ Database tables initialised');

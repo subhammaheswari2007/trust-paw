@@ -3,10 +3,11 @@ const BASE_URL = import.meta.env.VITE_API_URL || '';
 async function request(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
   const config = {
+    cache: 'no-store',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
       ...options.headers,
     },
@@ -140,14 +141,20 @@ export function adminDeleteProvider(id, passcode) {
 // ─── Site Settings API ──────────────────────────────────────────────────────
 
 export function getSettings() {
-  return request('/api/v1/providers/settings').catch(() => ({
-    success: true,
-    settings: {
-      heroImageUrl: localStorage.getItem('trustpaw_hero_image') || 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=900&h=700&fit=crop',
-      sosPhone: localStorage.getItem('trustpaw_sos_phone') || '+919725671201',
-      sosHospitalName: localStorage.getItem('trustpaw_sos_name') || 'TrustPaw 24/7 National Emergency Trauma Hotline',
-    },
-  }));
+  return request('/api/v1/providers/settings').catch(() => {
+    const cachedHero = localStorage.getItem('trustpaw_hero_image');
+    const heroImageUrl = (cachedHero && !cachedHero.includes('photo-1548767797-d8c844163c4c'))
+      ? cachedHero
+      : 'https://res.cloudinary.com/qhmx80db/image/upload/v1794515619/WIN_20260623_03_15_58_Pro.jpg';
+    return {
+      success: true,
+      settings: {
+        heroImageUrl,
+        sosPhone: localStorage.getItem('trustpaw_sos_phone') || '+919725671201',
+        sosHospitalName: localStorage.getItem('trustpaw_sos_name') || 'TrustPaw 24/7 National Emergency Trauma Hotline',
+      },
+    };
+  });
 }
 
 export function adminSaveSettings(settingsData, passcode) {

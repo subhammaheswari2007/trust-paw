@@ -57,7 +57,7 @@ export default function AdminPortalPage() {
 
   // Live Platform Settings state
   const [heroImageUrl, setHeroImageUrl] = useState(
-    'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=900&h=700&fit=crop'
+    'https://res.cloudinary.com/qhmx80db/image/upload/v1794515619/WIN_20260623_03_15_58_Pro.jpg'
   );
   const [sosPhone, setSosPhone] = useState('+919725671201');
   const [sosHospitalName, setSosHospitalName] = useState(
@@ -136,15 +136,18 @@ export default function AdminPortalPage() {
 
   const handleSaved = (savedProvider) => {
     setToastMessage(`Facility "${savedProvider.name}" updated successfully! Changes are live.`);
+    const targetId = savedProvider.id || savedProvider._id;
     setProviders((prev) => {
-      const idx = prev.findIndex((p) => p.id === savedProvider.id);
+      const idx = prev.findIndex((p) => p.id === targetId || p._id === targetId);
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = savedProvider;
+        next[idx] = { ...next[idx], ...savedProvider, id: targetId };
         return next;
       }
-      return [savedProvider, ...prev];
+      return [{ ...savedProvider, id: targetId }, ...prev];
     });
+    // Immediately re-fetch all providers from the server to guarantee perfect synchronization
+    fetchAllProviders();
     setTimeout(() => setToastMessage(''), 3500);
   };
 
@@ -153,9 +156,10 @@ export default function AdminPortalPage() {
     try {
       setIsSavingSettings(true);
       setSettingsStatus('');
+      const cleanHeroUrl = (heroImageUrl || '').trim().replace(/^["']|["']$/g, '');
       await api.adminSaveSettings(
         {
-          heroImageUrl,
+          heroImageUrl: cleanHeroUrl,
           sosPhone,
           sosHospitalName,
         },
@@ -163,9 +167,12 @@ export default function AdminPortalPage() {
       );
 
       // Also persist to localStorage for instant client view update
-      localStorage.setItem('trustpaw_hero_image', heroImageUrl);
+      localStorage.setItem('trustpaw_hero_image', cleanHeroUrl);
       localStorage.setItem('trustpaw_sos_phone', sosPhone);
       localStorage.setItem('trustpaw_sos_name', sosHospitalName);
+
+      // Re-fetch settings from server to confirm persistence
+      await fetchSettings();
 
       setToastMessage('Live platform settings updated successfully! Changes are immediately live for all clients.');
       setSettingsStatus('Settings successfully saved and published!');
@@ -179,7 +186,7 @@ export default function AdminPortalPage() {
   };
 
   const handleResetSettingsDefaults = () => {
-    setHeroImageUrl('https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=900&h=700&fit=crop');
+    setHeroImageUrl('https://res.cloudinary.com/qhmx80db/image/upload/v1794515619/WIN_20260623_03_15_58_Pro.jpg');
     setSosPhone('+919725671201');
     setSosHospitalName('TrustPaw 24/7 National Emergency Trauma Hotline');
   };
@@ -466,7 +473,7 @@ export default function AdminPortalPage() {
                       </label>
                       <input
                         id="heroImageUrl"
-                        type="url"
+                        type="text"
                         className="settings-text-input"
                         placeholder="https://images.unsplash.com/..."
                         value={heroImageUrl}

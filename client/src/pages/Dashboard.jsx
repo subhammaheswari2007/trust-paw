@@ -24,8 +24,9 @@ export default function Dashboard() {
 
   // Dynamic Site Settings configured from Admin side
   const [heroImage, setHeroImage] = useState(() => {
-    return localStorage.getItem('trustpaw_hero_image') ||
-      'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=900&h=700&fit=crop';
+    const cached = localStorage.getItem('trustpaw_hero_image');
+    if (cached && !cached.includes('photo-1548767797-d8c844163c4c')) return cached;
+    return 'https://res.cloudinary.com/qhmx80db/image/upload/v1794515619/WIN_20260623_03_15_58_Pro.jpg';
   });
 
   const [sosPhone, setSosPhone] = useState(() => {
