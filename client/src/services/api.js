@@ -5,13 +5,13 @@ async function request(endpoint, options = {}) {
   const config = {
     cache: 'no-store',
     credentials: 'include',
+    ...options,
     headers: {
       'Content-Type': 'application/json',
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
-      ...options.headers,
+      ...(options.headers || {}),
     },
-    ...options,
   };
 
   if (config.body && typeof config.body === 'object') {
@@ -123,9 +123,10 @@ export function adminSaveProvider(providerData, passcode) {
   return request('/api/v1/providers/admin/save', {
     method: 'POST',
     headers: {
+      'Content-Type': 'application/json',
       'x-admin-passcode': passcode || sessionStorage.getItem('trustpaw_admin_token') || 'trustpaw2007',
     },
-    body: JSON.stringify(providerData),
+    body: typeof providerData === 'string' ? providerData : JSON.stringify(providerData),
   });
 }
 
@@ -133,6 +134,7 @@ export function adminDeleteProvider(id, passcode) {
   return request(`/api/v1/providers/admin/${id}`, {
     method: 'DELETE',
     headers: {
+      'Content-Type': 'application/json',
       'x-admin-passcode': passcode || sessionStorage.getItem('trustpaw_admin_token') || 'trustpaw2007',
     },
   });
@@ -161,9 +163,10 @@ export function adminSaveSettings(settingsData, passcode) {
   return request('/api/v1/providers/admin/settings', {
     method: 'POST',
     headers: {
+      'Content-Type': 'application/json',
       'x-admin-passcode': passcode || sessionStorage.getItem('trustpaw_admin_token') || 'trustpaw2007',
     },
-    body: JSON.stringify(settingsData),
+    body: typeof settingsData === 'string' ? settingsData : JSON.stringify(settingsData),
   });
 }
 

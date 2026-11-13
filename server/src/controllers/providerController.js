@@ -113,13 +113,25 @@ export async function adminVerifyPasscode(req, res) {
 
 export async function adminSaveProvider(req, res, next) {
   try {
-    const passcode = req.headers['x-admin-passcode'] || req.body.adminPasscode;
+    const passcode = req.headers['x-admin-passcode'] || req.body?.adminPasscode;
     if (passcode !== ADMIN_PASSCODE) {
       return res.status(403).json({ success: false, message: 'Unauthorized admin request' });
     }
 
-    const payload = { ...req.body };
+    let payload = req.body;
+    if (typeof payload === 'string') {
+      try {
+        payload = JSON.parse(payload);
+      } catch {
+        payload = {};
+      }
+    }
+    payload = { ...(payload || {}) };
     delete payload.adminPasscode;
+
+    if (!payload.name || !String(payload.name).trim()) {
+      return res.status(400).json({ success: false, message: 'Doctor/Facility name is required' });
+    }
 
     if (!payload.id) {
       payload.id = 'prov_' + Date.now();
@@ -176,7 +188,16 @@ export async function adminSaveSettings(req, res, next) {
       return res.status(403).json({ success: false, message: 'Unauthorized admin request' });
     }
 
-    const { heroImageUrl, sosPhone, sosHospitalName } = req.body || {};
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        body = {};
+      }
+    }
+
+    const { heroImageUrl, sosPhone, sosHospitalName } = body || {};
     if (heroImageUrl !== undefined) setSiteSetting('heroImageUrl', heroImageUrl);
     if (sosPhone !== undefined) setSiteSetting('sosPhone', sosPhone);
     if (sosHospitalName !== undefined) setSiteSetting('sosHospitalName', sosHospitalName);

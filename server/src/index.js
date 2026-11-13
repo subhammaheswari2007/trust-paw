@@ -59,7 +59,18 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '5mb' }));
+app.use(express.text({ limit: '5mb', type: ['text/*', 'application/*'] }));
+app.use((req, _res, next) => {
+  if (typeof req.body === 'string' && req.body.trim().startsWith('{')) {
+    try {
+      req.body = JSON.parse(req.body);
+    } catch {
+      // ignore
+    }
+  }
+  next();
+});
 
 // Disable caching on all API routes so updates are immediately visible on client
 app.use('/api', (_req, res, next) => {
