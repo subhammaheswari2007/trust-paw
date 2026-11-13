@@ -29,6 +29,8 @@ export default function ProviderCard({ provider }) {
           alt={provider.name}
           className="provider-card__img"
           loading="lazy"
+          referrerPolicy="no-referrer"
+          crossOrigin="anonymous"
           onError={(e) => {
             e.target.src = 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=400&h=400&fit=crop';
           }}

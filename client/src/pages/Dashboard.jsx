@@ -186,6 +186,8 @@ export default function Dashboard() {
                   src={heroImage}
                   alt="Veterinarian with companion dog"
                   className="hero-image"
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
                   onError={(e) => {
                     e.target.src = 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=900&h=700&fit=crop';
                   }}

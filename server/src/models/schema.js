@@ -13,12 +13,12 @@ function tryParseJSON(val, fallback) {
 
 export function normalizeImageUrl(url) {
   if (!url || typeof url !== 'string') return '';
-  let clean = url.trim();
+  let clean = url.trim().replace(/^["']|["']$/g, '');
 
-  // Convert Google Drive preview/share link to direct image URL
-  const gdriveMatch = clean.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (gdriveMatch) {
-    return `https://drive.google.com/uc?export=view&id=${gdriveMatch[1]}`;
+  // Convert Google Drive share/preview links to direct image source
+  const gdriveIdMatch = clean.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^&]+&)?id=)([a-zA-Z0-9_-]+)/);
+  if (gdriveIdMatch) {
+    return `https://drive.google.com/uc?export=view&id=${gdriveIdMatch[1]}`;
   }
 
   // Convert Dropbox share links to raw direct image links
@@ -300,23 +300,23 @@ export function upsertProvider(p = {}) {
   const existing = p.id ? findProviderById(p.id) : null;
 
   const id = p.id || existing?.id || 'prov_' + Date.now();
-  const name = p.name ?? existing?.name ?? 'Dr. Specialist';
-  const clinicName = p.clinicName ?? p.clinic_name ?? existing?.clinicName ?? '';
-  const category = p.category ?? existing?.category ?? 'veterinary';
-  const city = p.city ?? existing?.city ?? 'Mumbai';
-  const area = p.area ?? existing?.area ?? '';
-  const address = p.address ?? existing?.address ?? '';
-  const phone = p.phone ?? existing?.phone ?? '';
-  const email = p.email ?? existing?.email ?? '';
+  const name = (p.name && String(p.name).trim()) ? String(p.name).trim() : (existing?.name || 'Dr. Specialist');
+  const clinicName = (p.clinicName !== undefined ? String(p.clinicName).trim() : (p.clinic_name ?? existing?.clinicName ?? ''));
+  const category = (p.category && String(p.category).trim()) ? String(p.category).trim() : (existing?.category || 'veterinary');
+  const city = (p.city && String(p.city).trim()) ? String(p.city).trim() : (existing?.city || 'Mumbai');
+  const area = (p.area !== undefined ? String(p.area).trim() : (existing?.area ?? ''));
+  const address = (p.address !== undefined ? String(p.address).trim() : (existing?.address ?? ''));
+  const phone = (p.phone && String(p.phone).trim()) ? String(p.phone).trim() : (existing?.phone || '');
+  const email = (p.email !== undefined ? String(p.email).trim() : (existing?.email ?? ''));
   const rating = Number(p.rating ?? existing?.rating) || 4.5;
   const reviewCount = Number(p.reviewCount ?? p.review_count ?? existing?.reviewCount) || 0;
   const yearsExperience = Number(p.yearsExperience ?? p.years_experience ?? existing?.yearsExperience) || 1;
   const specializations = p.specializations ?? existing?.specializations ?? [];
   const isEmergency = (p.isEmergency !== undefined ? p.isEmergency : (p.is_emergency !== undefined ? p.is_emergency : existing?.isEmergency)) ? 1 : 0;
   const is24x7 = (p.is24x7 !== undefined ? p.is24x7 : (p.is_24x7 !== undefined ? p.is_24x7 : existing?.is24x7)) ? 1 : 0;
-  const lat = Number(p.lat ?? existing?.lat) || 0;
-  const lng = Number(p.lng ?? existing?.lng) || 0;
-  const rawImage = p.imageUrl ?? p.image_url ?? existing?.imageUrl ?? '';
+  const lat = Number(p.lat ?? existing?.lat) || 19.076;
+  const lng = Number(p.lng ?? existing?.lng) || 72.8777;
+  const rawImage = (p.imageUrl && String(p.imageUrl).trim()) ? String(p.imageUrl).trim() : (p.image_url ?? existing?.imageUrl ?? '');
   const imageUrl = normalizeImageUrl(rawImage);
   const pricing = p.pricing ?? existing?.pricing ?? {};
   const availableSlots = p.availableSlots ?? p.available_slots ?? existing?.availableSlots ?? [];

@@ -140,6 +140,11 @@ export default function ProviderDetailPage() {
                 src={provider.imageUrl || 'https://images.unsplash.com/photo-1628009368231-7bb3cfcb0def?w=600&h=600&fit=crop'}
                 alt={provider.name}
                 className="detail-hero-img"
+                referrerPolicy="no-referrer"
+                crossOrigin="anonymous"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&h=600&fit=crop';
+                }}
               />
               {provider.isEmergency && (
                 <span className="emergency-badge">

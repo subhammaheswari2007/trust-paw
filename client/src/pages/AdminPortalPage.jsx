@@ -393,6 +393,8 @@ export default function AdminPortalPage() {
                           src={p.imageUrl}
                           alt={p.name}
                           className="admin-row-avatar"
+                          referrerPolicy="no-referrer"
+                          crossOrigin="anonymous"
                           onError={(e) => {
                             e.target.src =
                               'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=300&h=300&fit=crop';
@@ -418,7 +420,7 @@ export default function AdminPortalPage() {
                       <div className="admin-row-actions">
                         <button
                           type="button"
-                          className="btn-secondary"
+                          className="btn-secondary admin-edit-facility-btn"
                           style={{ fontSize: '12.5px', padding: '7px 12px' }}
                           onClick={() => handleOpenEdit(p)}
                         >
@@ -469,12 +471,14 @@ export default function AdminPortalPage() {
                         placeholder="https://images.unsplash.com/..."
                         value={heroImageUrl}
                         onChange={(e) => {
-                          let val = e.target.value;
-                          const gdriveMatch = val.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+                          let val = e.target.value.trim().replace(/^["']|["']$/g, '');
+                          const gdriveMatch = val.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^&]+&)?id=)([a-zA-Z0-9_-]+)/);
                           if (gdriveMatch) {
                             val = `https://drive.google.com/uc?export=view&id=${gdriveMatch[1]}`;
-                          } else if (val.includes('dropbox.com') && val.includes('dl=0')) {
-                            val = val.replace('dl=0', 'raw=1');
+                          } else if (val.includes('dropbox.com')) {
+                            let dbx = val.replace('dl=0', 'raw=1');
+                            if (!dbx.includes('raw=1')) dbx += (dbx.includes('?') ? '&' : '?') + 'raw=1';
+                            val = dbx;
                           }
                           setHeroImageUrl(val);
                         }}
@@ -510,6 +514,8 @@ export default function AdminPortalPage() {
                         src={heroImageUrl}
                         alt="Landing Page Hero Preview"
                         className="hero-preview-img"
+                        referrerPolicy="no-referrer"
+                        crossOrigin="anonymous"
                         onError={(e) => {
                           e.target.src =
                             'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=900&h=700&fit=crop';
@@ -650,6 +656,7 @@ export default function AdminPortalPage() {
       {/* Facility Editor Modal */}
       {showEditor && (
         <ProviderEditorModal
+          key={editingProvider?.id || 'new-provider'}
           provider={editingProvider}
           onSave={handleSaved}
           onClose={() => setShowEditor(false)}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as api from '../services/api';
 import './ProviderEditorModal.css';
 
@@ -22,6 +22,8 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
     yearsExperience: provider?.yearsExperience ?? 8,
     isEmergency: Boolean(provider?.isEmergency),
     is24x7: Boolean(provider?.is24x7),
+    lat: provider?.lat ?? 19.076,
+    lng: provider?.lng ?? 72.8777,
     // Pricing
     consultationMin: provider?.pricing?.consultation?.min ?? 500,
     consultationMax: provider?.pricing?.consultation?.max ?? 1200,
@@ -33,17 +35,53 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
     availableSlots: (provider?.availableSlots || ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00']).join(', '),
   });
 
+  useEffect(() => {
+    if (provider) {
+      setFormData({
+        id: provider.id || '',
+        name: provider.name || '',
+        clinicName: provider.clinicName || '',
+        category: provider.category || 'veterinary',
+        city: provider.city || 'Mumbai',
+        area: provider.area || '',
+        address: provider.address || '',
+        phone: provider.phone || '',
+        email: provider.email || '',
+        imageUrl: provider.imageUrl || 'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=400&h=400&fit=crop',
+        rating: provider.rating ?? 4.8,
+        reviewCount: provider.reviewCount ?? 120,
+        yearsExperience: provider.yearsExperience ?? 8,
+        isEmergency: Boolean(provider.isEmergency),
+        is24x7: Boolean(provider.is24x7),
+        lat: provider.lat ?? 19.076,
+        lng: provider.lng ?? 72.8777,
+        consultationMin: provider?.pricing?.consultation?.min ?? 500,
+        consultationMax: provider?.pricing?.consultation?.max ?? 1200,
+        followUpMin: provider?.pricing?.followUp?.min ?? 300,
+        followUpMax: provider?.pricing?.followUp?.max ?? 600,
+        specializations: (provider?.specializations || ['General Checkup', 'Vaccination']).join(', '),
+        languages: (provider?.languages || ['English', 'Hindi']).join(', '),
+        availableSlots: (provider?.availableSlots || ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00']).join(', '),
+      });
+    }
+  }, [provider]);
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (field, value) => {
     let finalVal = value;
     if (field === 'imageUrl' && typeof value === 'string') {
-      const gdriveMatch = value.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+      const clean = value.trim().replace(/^["']|["']$/g, '');
+      const gdriveMatch = clean.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^&]+&)?id=)([a-zA-Z0-9_-]+)/);
       if (gdriveMatch) {
         finalVal = `https://drive.google.com/uc?export=view&id=${gdriveMatch[1]}`;
-      } else if (value.includes('dropbox.com') && value.includes('dl=0')) {
-        finalVal = value.replace('dl=0', 'raw=1');
+      } else if (clean.includes('dropbox.com')) {
+        let dbx = clean.replace('dl=0', 'raw=1');
+        if (!dbx.includes('raw=1')) dbx += (dbx.includes('?') ? '&' : '?') + 'raw=1';
+        finalVal = dbx;
+      } else {
+        finalVal = clean;
       }
     }
     setFormData((prev) => ({ ...prev, [field]: finalVal }));
@@ -62,7 +100,7 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
 
       // Build structured payload
       const payload = {
-        id: formData.id || 'prov_' + Date.now(),
+        id: formData.id || provider?.id || ('prov_' + Date.now()),
         name: (formData.name || '').trim(),
         clinicName: (formData.clinicName || '').trim(),
         category: formData.category || 'veterinary',
@@ -77,6 +115,8 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
         yearsExperience: Number(formData.yearsExperience) || 1,
         isEmergency: Boolean(formData.isEmergency),
         is24x7: Boolean(formData.is24x7),
+        lat: Number(formData.lat) || provider?.lat || 19.076,
+        lng: Number(formData.lng) || provider?.lng || 72.8777,
         specializations: (formData.specializations || '')
           .split(',')
           .map((s) => s.trim())
@@ -134,8 +174,10 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
           <div className="editor-section-heading">1. Basic Identification & Category</div>
           <div className="editor-grid-3">
             <div className="editor-field-group">
-              <label>Doctor / Specialist Name *</label>
+              <label htmlFor="provider-name">Doctor / Specialist Name *</label>
               <input
+                id="provider-name"
+                name="name"
                 type="text"
                 className="editor-input"
                 placeholder="e.g. Dr. Ananya Sharma"
@@ -178,6 +220,8 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
               src={formData.imageUrl}
               alt="Preview"
               className="editor-photo-thumb"
+              referrerPolicy="no-referrer"
+              crossOrigin="anonymous"
               onError={(e) => {
                 e.target.src = 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=300&h=300&fit=crop';
               }}
@@ -185,6 +229,8 @@ export default function ProviderEditorModal({ provider, onSave, onClose }) {
             <div className="editor-photo-info">
               <p>Paste any direct image URL (Unsplash, Cloudinary, AWS S3, or website link):</p>
               <input
+                id="provider-imageUrl"
+                name="imageUrl"
                 type="url"
                 className="editor-input"
                 placeholder="https://images.unsplash.com/..."
